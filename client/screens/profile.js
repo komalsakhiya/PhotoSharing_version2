@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, Modal, ActivityIndicator, ToastAndroid, Dimensions } from 'react-native';
+import {Platform, StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, Modal, ActivityIndicator, ToastAndroid, Dimensions } from 'react-native';
 import Config from '../config';
 import { AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -44,7 +44,11 @@ export default class Profile extends Component {
         console.log("value===+++++++++++++++++++++===========================>", userId.data._id,token);
       }
     } catch (error) {
+      if (Platform.OS === 'ios') {
+        alert('User Data Not Found')
+      } else {
       ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+      }
       console.log("err=====>", error)
     }
     this.getUserById();
@@ -67,7 +71,11 @@ export default class Profile extends Component {
       .catch(err => {
         console.log('er=====>', err);
         // alert('Internal Server Error')
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
       })
   }
 
@@ -94,7 +102,11 @@ export default class Profile extends Component {
       .catch(err => {
         console.log('er=====>', err);
         // alert('Internal Server Error')
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
       })
   }
 
@@ -160,7 +172,11 @@ export default class Profile extends Component {
           console.log("=================response============>", JSON.parse(res.data));
           if (JSON.parse(res.data).message == 'Try other username.....') {
             console.log("]]]]]]]]]]]]]]]]]]]]]]]");
+            if (Platform.OS === 'ios') {
+              alert('Try other userName...')
+            } else {
             ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
+            }
           } else {
             console.log("in else==========>")
             EventRegister.emit('resp', JSON.parse(res.data));
@@ -195,7 +211,11 @@ export default class Profile extends Component {
             console.log("=================response============>", JSON.parse(res.data));
             if (JSON.parse(res.data).message == 'Try other username.....') {
               console.log("]]]]]]]]]]]]]]]]]]]]]]]");
+              if (Platform.OS === 'ios') {
+                alert('Try other username...')
+              } else {
               ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
+              }
             } else {
               console.log("in else==========>")
               EventRegister.emit('resp', JSON.parse(res.data));
@@ -230,7 +250,11 @@ export default class Profile extends Component {
             console.log("=================response============>", JSON.parse(res.data));
             if (JSON.parse(res.data).message == 'Try other username.....') {
               console.log("]]]]]]]]]]]]]]]]]]]]]]]");
+              if (Platform.OS === 'ios') {
+                alert('Try other username...')
+              } else {
               ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
+              }
             } else {
               console.log("in else==========>")
               EventRegister.emit('resp', JSON.parse(res.data));
@@ -270,7 +294,11 @@ export default class Profile extends Component {
           if (JSON.parse(res.data).message == 'Try other username.....') {
             console.log("=================response============>", JSON.parse(res.data));
             console.log("]]]]]]]]]]]]]]]]]]]]]]]");
+            if (Platform.OS === 'ios') {
+              alert('Try other username....')
+            } else {
             ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
+            }
           } else {
             console.log("in else==========>")
             EventRegister.emit('resp', JSON.parse(res.data));

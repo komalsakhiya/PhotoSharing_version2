@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
+import {Platform, StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
 import Config from '../config';
 import axios from 'axios';
 import { AsyncStorage } from 'react-native';
@@ -41,7 +41,11 @@ export default class Search extends Component {
         console.log("value===+++++++++++++++++++++===========================>", global.curruntUserData.data._id);
       }
     } catch (error) {
-      ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+      if (Platform.OS === 'ios') {
+        alert('User Data Not Found')
+      } else {
+        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+      }
       console.log("err=====>", err)
     }
     this.getFriends()
@@ -63,7 +67,11 @@ export default class Search extends Component {
       .catch(err => {
         console.log('er=====>', err);
         // alert('Internal Server Error')
-         ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
       })
   }
 
@@ -105,7 +113,11 @@ export default class Search extends Component {
           .catch(err => {
             console.log("err======>", err);
             // alert('Internal Server Error')
-             ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+            if (Platform.OS === 'ios') {
+              alert('Internal Server Error')
+            } else {
+              ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+            }
           })
       } else {
         const payload = {
@@ -122,7 +134,7 @@ export default class Search extends Component {
               let searchUserId = response.data.data[0]._id
               console.log('myFriends===========>', myFriends);
               console.log("searchUserId============>0", searchUserId);
-              console.log("this.state.friends=============>",this.state.friends)
+              console.log("this.state.friends=============>", this.state.friends)
               let result = this.state.friends.filter(function (o1) {
                 // if match found return false
                 return _.findIndex(response.data.data, { 'id': o1.id }) !== -1 ? false : true;
@@ -142,7 +154,11 @@ export default class Search extends Component {
           .catch(err => {
             console.log("err======>", err);
             // alert('Internal Server Error')
-             ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+            if (Platform.OS === 'ios') {
+              alert('Internal Server Error')
+            } else {
+              ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+            }
           })
       }
     }
@@ -162,19 +178,31 @@ export default class Search extends Component {
     if (payload.requestedUser == payload.userTobeFollowed) {
       console.log("user can't follow itself")
       // alert("user can't follow itself")
-      ToastAndroid.show("User Can't follow itself", ToastAndroid.SHORT);
+      if (Platform.OS === 'ios') {
+        alert("User Can't follow itself")
+      } else {
+        ToastAndroid.show("User Can't follow itself", ToastAndroid.SHORT);
+      }
     } else {
       userService.handleClickFollow(payload)
         .then(response => {
           console.log("response========================>    ", response.data);
           console.log("follow sucessfully................");
           res = item;
-          ToastAndroid.show('Follow successfully....', ToastAndroid.SHORT);
+          if (Platform.OS === 'ios') {
+            alert("Follow successfully....")
+          } else {
+            ToastAndroid.show('Follow successfully....', ToastAndroid.SHORT);
+          }
         })
         .catch(err => {
           console.log("err======>", err);
           // alert('Internal Server Error')
-           ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          if (Platform.OS === 'ios') {
+            alert("Internal Server Error")
+          } else {
+            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          }
         })
     }
   }
@@ -201,6 +229,7 @@ export default class Search extends Component {
    */
   savePostImage = (data) => {
     console.log("=====================", data);
+    ToastAndroid.show('Downloading...', ToastAndroid.SHORT);
     this.setState(
       {
         visible: true,
@@ -234,7 +263,8 @@ export default class Search extends Component {
         .fetch('GET', config.getMediaUrl() + data, {
         })
         .then((res) => {
-          console.log('The file saved to ', res)
+          console.log('The file saved to ', res);
+          ToastAndroid.show('Download completed', ToastAndroid.SHORT);
         })
     })
     setTimeout(() => {
@@ -389,7 +419,11 @@ export default class Search extends Component {
       .catch(err => {
         // console.log("err======>", err);
         // alert('Internal Server Error')
-         ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        if (Platform.OS === 'ios') {
+          alert("Internal Server Error")
+        } else {
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
       })
   }
 
@@ -404,7 +438,11 @@ export default class Search extends Component {
     })
     if (!this.state.comment) {
       // alert("Enter Any Comment");
-      ToastAndroid.show('Enter any comment', ToastAndroid.SHORT);
+      if (Platform.OS === 'ios') {
+        alert("Enter any comment")
+      } else {
+        ToastAndroid.show('Enter any comment', ToastAndroid.SHORT);
+      }
       this.setState({
         ButtonStateHolder: false
       })
@@ -432,7 +470,11 @@ export default class Search extends Component {
         .catch(err => {
           console.log("err======>", err);
           // alert('Internal Server Error')
-           ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          if (Platform.OS === 'ios') {
+            alert("Internal Server Error")
+          } else {
+            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          }
         })
     }
   }
@@ -505,7 +547,7 @@ export default class Search extends Component {
                         </View>
                         <View>
                           <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate('UserProfile', { userId: item.userId})}
+                            onPress={() => this.props.navigation.navigate('UserProfile', { userId: item.userId })}
                           >
                             <Text style={styles.userName}>{item.userId.userName}</Text>
                           </TouchableOpacity>

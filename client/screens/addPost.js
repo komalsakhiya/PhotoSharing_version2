@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ToastAndroid } from 'react-native';
+import {Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ToastAndroid } from 'react-native';
 import Config from '../config';
 import { AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -39,7 +39,7 @@ export default class Addpost extends Component {
 				console.log("this images===========", response);
 				const source = { uri: response.uri }
 				console.log("source=============================>", source);
-				this.setState({ file: response.uri, imageName: response.fileName,ButtonStateHolder:false });
+				this.setState({ file: response.uri, imageName: response.fileName, ButtonStateHolder: false });
 				console.log('image path=========>', this.state.file, this.state.imageName);
 			}
 		})
@@ -69,7 +69,11 @@ export default class Addpost extends Component {
 		console.log('hashTag===============>', typeof hashTag);
 		console.log("this.state.buttonstateholder=================>", this.state.ButtonStateHolder);
 		if (!this.state.imageName) {
+			if (Platform.OS === 'ios') {
+				alert('Choose Image')
+			} else {
 			ToastAndroid.show('Choose Image', ToastAndroid.SHORT);
+			}
 		} else {
 			try {
 				const curruntUser = await AsyncStorage.getItem('curruntUser');
@@ -107,22 +111,27 @@ export default class Addpost extends Component {
 					},
 				])
 				.then(async (res) => {
-					console.log('response====================>', res.data,JSON.parse(res.data).message);
-					this.setState({ content: '', file: "", ButtonStateHolder: false ,imageName:''})
+					console.log('response====================>', res.data, JSON.parse(res.data).message);
+					this.setState({ content: '', file: "", ButtonStateHolder: false, imageName: '' })
 					if ((res.data == "Unauthorized: Invalid token" || res.data == "Unauthorized: No token provided")) {
 						alert(res.data);
 						await AsyncStorage.setItem('curruntUser', '');
 						this.props.navigation.navigate('Login')
 					} else {
 						// alert("Add Sucessfully...")
-						ToastAndroid.show(JSON.parse(res.data).message, ToastAndroid.SHORT);
+						if (Platform.OS === 'ios') {
+							alert('User Data Not Found')
+						} else {
+							ToastAndroid.show(JSON.parse(res.data).message, ToastAndroid.SHORT);
+						}
 						this.props.navigation.navigate('Profile')
 					}
+
 				})
 				.catch((err) => {
 					console.log('err===========================>', err);
 					ToastAndroid.show("Internal Server Error", ToastAndroid.SHORT);
-					this.setState({ content: '', file: "", ButtonStateHolder:false ,imageName:''})
+					this.setState({ content: '', file: "", ButtonStateHolder: false, imageName: '' })
 				})
 		}
 	}

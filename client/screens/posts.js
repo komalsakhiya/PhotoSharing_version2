@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, AsyncStorage, Dimensions, ActivityIndicator, Alert, ToastAndroid, Modal, Animated, BackHandler, CameraRoll } from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, AsyncStorage, Dimensions, ActivityIndicator, Alert, ToastAndroid, Animated, CameraRoll } from 'react-native';
 import Config from '../config';
 import { PermissionsAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -10,6 +10,7 @@ import postService from '../services/post.service';
 import userService from '../services/user.service';
 const config = new Config();
 const { width } = Dimensions.get('screen');
+
 
 export default class Post extends Component {
   constructor(props) {
@@ -49,8 +50,12 @@ export default class Post extends Component {
         global.curruntUserId = userId.data._id
       }
     } catch (error) {
-      ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-      Console.log("errr=====>", error)
+      if (Platform.OS === 'ios') {
+        alert('User Data Not Found')
+      } else {
+        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+        Console.log("errr=====>", error)
+      }
     }
     this.getFriendsPost();
     this.getAllUser();
@@ -82,8 +87,12 @@ export default class Post extends Component {
       })
       .catch(err => {
         console.log('er=====>', err);
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        // alert('Internal Server Error')
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          // alert('Internal Server Error')
+        }
       })
   }
 
@@ -108,13 +117,17 @@ export default class Post extends Component {
       })
       .catch(err => {
         console.log('er=====>', err);
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        // alert('Internal Server Error')
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          // alert('Internal Server Error')
+        }
       })
   }
 
   /**
-   * @param {*} postId
+   * @param {*} postId  
    *  Add Comment 
   */
   comment = async (postId) => {
@@ -146,8 +159,12 @@ export default class Post extends Component {
         })
         .catch(err => {
           console.log('er=====>', err);
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-          // alert('Internal Server Error')
+          if (Platform.OS === 'ios') {
+            alert('Internal Server Error')
+          } else {
+            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+            // alert('Internal Server Error')
+          }
         })
       this.setState({
         comment: '',
@@ -161,15 +178,13 @@ export default class Post extends Component {
    * Save post Image
    */
   savePostImage = (data) => {
+    ToastAndroid.show('Downloading...', ToastAndroid.SHORT);
     console.log("=====================", data);
     this.setState(
       {
         visible: true,
         ButtonStateHolder: true
-      },
-      () => {
-        this.hideToast();
-      },
+      }
     );
     if (Platform.OS === 'android') {
       PermissionsAndroid.request(
@@ -196,6 +211,7 @@ export default class Post extends Component {
           .fetch('GET', config.getMediaUrl() + data, {
           })
           .then((res) => {
+            ToastAndroid.show('Download completed', ToastAndroid.SHORT);
             console.log('The file saved to ', res)
           })
       })
@@ -208,16 +224,10 @@ export default class Post extends Component {
     }, 700)
   }
 
-  hideToast = () => {
-    this.setState({
-      visible: false,
-    });
-  };
-
-/**
- * @param {*} profilePhoto
- * Get ProfilePhoto
- */
+  /**
+   * @param {*} profilePhoto
+   * Get ProfilePhoto
+   */
   profilePic = (profilePhoto) => {
     if (!profilePhoto) {
       return (
@@ -303,7 +313,7 @@ export default class Post extends Component {
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
                     <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('UserProfile', { userId: comment.userId})}
+                      onPress={() => this.props.navigation.navigate('UserProfile', { userId: comment.userId })}
                     >
                       <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                     </TouchableOpacity>
@@ -357,8 +367,12 @@ export default class Post extends Component {
       })
       .catch(err => {
         console.log('er=====>', err);
-        // alert('Internal Server Error')
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
+          // alert('Internal Server Error')
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
       })
   }
 
@@ -395,7 +409,11 @@ export default class Post extends Component {
       })
       .catch(err => {
         console.log('er=====>', err);
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
         this.setState({ ButtonStateHolder: false })
         // alert('Internal Server Error')
       })
@@ -410,7 +428,7 @@ export default class Post extends Component {
           ToastAndroid.LONG,
           ToastAndroid.BOTTOM,
           25,
-          160,
+          50,
         );
         return null;
       }
@@ -475,7 +493,7 @@ export default class Post extends Component {
                           disabled={this.state.ButtonStateHolder}
                           style={{ marginTop: 13 }}
                         />
-                        <Toast visible={this.state.visible} message="Downloading..." />
+                        {/* <Toast visible={this.state.visible} message="Downloading..." /> */}
                       </View>
                     </View>
                     <Image resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
@@ -508,10 +526,11 @@ export default class Post extends Component {
                 <View style={{ marginBottom: 10 }}>
                   <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                     <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('UserProfile', { userId: item.userId
-                       })}
+                      onPress={() => this.props.navigation.navigate('UserProfile', {
+                        userId: item.userId
+                      })}
                     >
-                        {item.content?(<Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{item.userId.userName}</Text>):(null)}
+                      {item.content ? (<Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{item.userId.userName}</Text>) : (null)}
                     </TouchableOpacity>
                     <ParsedText
                       style={styles.text}
@@ -543,6 +562,7 @@ export default class Post extends Component {
                           color={this.state.ButtonStateHolder ? '#C0C0C0' : '#696969'}
                         />
                       </TouchableOpacity>
+                      <Toast ref="toast" />
                     </View>
                   </View>
                   <TouchableOpacity
@@ -578,7 +598,7 @@ export default class Post extends Component {
                             </View>
                             <TouchableOpacity
                               style={{ flex: 8 }}
-                              onPress={() => { this.props.navigation.navigate('UserProfile', { userId: item}), this.RBSheet.close(); }}
+                              onPress={() => { this.props.navigation.navigate('UserProfile', { userId: item }), this.RBSheet.close(); }}
                             >
                               <Text style={{ marginTop: 10, color: 'black', fontSize: 18, marginLeft: 10 }}>{item.userName}</Text>
                             </TouchableOpacity>

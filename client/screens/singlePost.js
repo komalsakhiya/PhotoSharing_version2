@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, Image, ScrollView, TouchableOpacity, AsyncStorage, ActivityIndicator, Dimensions, ToastAndroid } from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, Image, ScrollView, TouchableOpacity, AsyncStorage, ActivityIndicator, Dimensions, ToastAndroid } from 'react-native';
 import Config from '../config';
-import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Popover from 'react-native-popover-view';
 import { EventRegister } from 'react-native-event-listeners';
@@ -32,9 +31,9 @@ export default class SinglePost extends Component {
         this.getPost();
       });
   };
-/**
- * Get CurruntUser Details from Storage
- */
+  /**
+   * Get CurruntUser Details from Storage
+   */
   componentDidMount = async () => {
     try {
       const curruntUser = await AsyncStorage.getItem('curruntUser');
@@ -44,7 +43,11 @@ export default class SinglePost extends Component {
         console.log("value===+++++++++++++++++++++===========================>", global.curruntUserData.data._id);
       }
     } catch (error) {
-      ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+      if (Platform.OS === 'ios') {
+        alert('User Data Not Found')
+      } else {
+        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+      }
       console.log("err===>", err)
     }
   }
@@ -87,7 +90,11 @@ export default class SinglePost extends Component {
       .catch(err => {
         console.log('errrr in single post=================>', err);
         // alert('Internal Server Error')
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
         ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
       })
   }
 
@@ -122,7 +129,11 @@ export default class SinglePost extends Component {
   comment = async (postId) => {
     console.log('data=============================>', postId);
     if (!this.state.comment) {
+      if (Platform.OS === 'ios') {
+        alert('Enter any comment')
+      } else {
       ToastAndroid.show('Enter any comment', ToastAndroid.SHORT);
+      }
     } else {
       console.log('userId======================>', global.curruntUserData.data._id);
       console.log('postId============================>', postId);
@@ -155,14 +166,22 @@ export default class SinglePost extends Component {
     postService.deletePost(payload).
       then(response => {
         console.log("response===============s==>", response.data);
+        if (Platform.OS === 'ios') {
+          alert(response.data.message)
+        } else {
         ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+        }
       })
       .then(() => this.props.navigation.navigate('Profile'))
       .catch(err => {
         // console.log("errrrr============>",err)
         console.log('er=====>', err.response.data.message);
         // alert('Internal Server Error')
+        if (Platform.OS === 'ios') {
+          alert(err.response.data.message)
+        } else {
         ToastAndroid.show(err.response.data.message, ToastAndroid.SHORT);
+        }
       })
   }
 
@@ -209,7 +228,7 @@ export default class SinglePost extends Component {
                 {this.profilePic(comment)}
                 <View style={{ marginTop: 5, marginLeft: 15 }}>
                   <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate('UserProfile', { userId: comment.userId})}
+                    onPress={() => this.props.navigation.navigate('UserProfile', { userId: comment.userId })}
                   >
                     <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                   </TouchableOpacity>
@@ -389,7 +408,7 @@ export default class SinglePost extends Component {
                 </View>
                 <View>
                   <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-                    {item.content?(  <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{item.userId.userName}</Text>):(null)}
+                    {item.content ? (<Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{item.userId.userName}</Text>) : (null)}
                     {this.displayContent(item)}
                   </View>
                   {this.displayCommentCount(item)}

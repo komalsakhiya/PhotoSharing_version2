@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image,ToastAndroid, ActivityIndicator, } from 'react-native';
+import {Platform, StyleSheet, Text, View, TouchableOpacity, ScrollView, Image,ToastAndroid, ActivityIndicator, } from 'react-native';
 import Config from '../config';
 import postService from '../services/post.service'
 let config = new Config();
@@ -30,7 +30,11 @@ export default class SharedPost extends Component {
       .catch(err => {
         console.log('er=====>', err);
         // alert('Internal Server Error')
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
         ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
       })
   }
 

@@ -26,7 +26,7 @@
 ```
 
 ## Getting started
-1. git clone < project-url.git >
+1. git clone https://github.com/komalsakhiya/PhotoSharing_version2.git
 
 2. Install NodeJS 
 

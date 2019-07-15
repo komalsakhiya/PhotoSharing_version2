@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, ScrollView, ToastAndroid } from 'react-native';
+import { Platform, StyleSheet, Text, View, FlatList, TouchableOpacity, ScrollView, ToastAndroid } from 'react-native';
 import { AsyncStorage } from 'react-native';
 import _ from 'lodash';
 import userService from '../services/user.service';
@@ -30,7 +30,11 @@ export default class Following extends Component {
             console.log("value===+===========================>", global.curruntUserData.data._id);
          }
       } catch (error) {
-         ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+         if (Platform.OS === 'ios') {
+            alert('User Data Not Found')
+         } else {
+            ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+         }
       }
       this.getFriends();
    }
@@ -47,7 +51,11 @@ export default class Following extends Component {
          })
          .catch(err => {
             console.log('er=====>', err);
-            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+            if (Platform.OS === 'ios') {
+               alert('Internal Server Error')
+            } else {
+               ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+            }
             // alert('Internal Server Error')
          })
    }
@@ -66,7 +74,11 @@ export default class Following extends Component {
       if (payload.requestedUser == payload.userTobeUnFollowed) {
          console.log("user can't Unfollow itself")
          // alert("user can't Unfollow itself")
-         ToastAndroid.show("user can't Unfollow itself", ToastAndroid.SHORT);
+         if (Platform.OS === 'ios') {
+            alert('Internal Server Error')
+         } else {
+            ToastAndroid.show("user can't Unfollow itself", ToastAndroid.SHORT);
+         }
       } else {
          userService.handleClickUnfollow(payload)
             .then(response => {
@@ -78,7 +90,11 @@ export default class Following extends Component {
             .catch(err => {
                console.log(err);
                this.setState({ ButtonStateHolder: false });
-               ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+               if (Platform.OS === 'ios') {
+                  alert('Internal Server Error')
+               } else {
+                  ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+               }
                // alert('Internal Server Error')
             })
       }

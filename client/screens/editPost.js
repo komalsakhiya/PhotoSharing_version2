@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, Image, TouchableOpacity, Dimensions, ToastAndroid } from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, Dimensions, ToastAndroid } from 'react-native';
 import Config from '../config';
 const { width } = Dimensions.get('window');
 import _ from 'lodash';
@@ -58,7 +58,7 @@ export default class EditPost extends Component {
 			var payload = {
 				"content": Data,
 				"hashTag": hashTag1,
-				"postId":postId
+				"postId": postId
 			}
 			postService.editPost(payload)
 				.then(response => {
@@ -69,7 +69,11 @@ export default class EditPost extends Component {
 				.catch(err => {
 					console.log(err);
 					this.setState({ ButtonStateHolder: false });
-					ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+					if (Platform.OS === 'ios') {
+						alert('Internal Server Error')
+					} else {
+						ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+					}
 					// alert('Internal Server Error')
 				})
 		} else {
@@ -87,7 +91,11 @@ export default class EditPost extends Component {
 				.catch(err => {
 					console.log(err);
 					this.setState({ ButtonStateHolder: false });
-					ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+					if (Platform.OS === 'ios') {
+						alert('Internal Server Error')
+					} else {
+						ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+					}
 					// alert('Internal Server Error')
 				})
 		}

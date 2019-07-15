@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, AsyncStorage, TouchableOpacity, ScrollView, Image } from 'react-native';
+import {Platform, StyleSheet, Text, View, AsyncStorage, TouchableOpacity, ScrollView, Image } from 'react-native';
 import Config from '../config';
 import userService from '../services/user.service'
 let config = new Config();
@@ -22,7 +22,11 @@ export default class Message extends Component {
         global.curruntUserId = userId.data._id
       }
     } catch (error) {
-      ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+      if (Platform.OS === 'ios') {
+        alert('User Data Not Found')
+      } else {
+        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+      }
     }
     this.sharedPostUser();
   }
@@ -39,7 +43,11 @@ export default class Message extends Component {
       })
       .catch(err => {
         // alert('Internal Server Error');
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
         console.log(err);
       })
   }

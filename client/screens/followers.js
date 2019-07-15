@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, ToastAndroid } from 'react-native';
+import { Platform, StyleSheet, Text, View, FlatList, TouchableOpacity, ToastAndroid } from 'react-native';
 import { AsyncStorage } from 'react-native';
 import _ from 'lodash';
 import userService from '../services/user.service';
@@ -28,7 +28,11 @@ export default class Followers extends Component {
             console.log("value===+++++++++++++++++++++===========================>", global.curruntUserData.data._id);
          }
       } catch (error) {
-         ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+         if (Platform.OS === 'ios') {
+            alert('User Data Not Found')
+         } else {
+            ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+         }
       }
       this.getFollowers();
    }
@@ -45,7 +49,11 @@ export default class Followers extends Component {
          })
          .catch(err => {
             console.log('er=====>', err);
-            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+            if (Platform.OS === 'ios') {
+               alert('Internal Server Error')
+            } else {
+               ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+            }
             // alert('Internal Server Error')
          })
    }

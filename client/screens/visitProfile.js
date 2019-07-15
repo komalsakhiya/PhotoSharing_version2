@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, ScrollView, Image, ToastAndroid, ActivityIndicator, FlatList } from 'react-native';
+import {Platform, StyleSheet, Text, View, TouchableOpacity, Dimensions, ScrollView, Image, ToastAndroid, ActivityIndicator, FlatList } from 'react-native';
 import Config from '../config';
 import postService from '../services/post.service';
-import userService from '../services/user.service';
 const config = new Config();
 let sorted_posts;
 const { width } = Dimensions.get('screen');
@@ -13,9 +12,7 @@ export default class UserProfile extends Component {
     super(props)
     this.state = {
       post: [],
-      userData: []
     };
-    this.getUserById()
     this.props.navigation.addListener(
       'didFocus',
       payload => {
@@ -49,30 +46,15 @@ export default class UserProfile extends Component {
       .catch(err => {
         console.log('er=====>', err);
         // alert('Internal Server Error')
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
         ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
       })
 
   }
 
-  /**
-   * @param {String} userId
-   * Get user by userId
-   */
-  getUserById = () => {
-    userService.getUserById(this.props.navigation.state.params.userId._id).
-      then(response => {
-        console.log('get user===================>', response.data);
-        // console.log('currunt user post===================>', response.post);
-        this.setState({
-          userData: response.data.data
-        })
-      })
-      .catch(err => {
-        console.log('er=====>', err);
-        // alert('Internal Server Error')
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-      })
-  }
 
   /**
    * Get ProfilePhoto 

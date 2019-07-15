@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity,ToastAndroid, ActivityIndicator, Dimensions } from 'react-native';
+import { Platform, StyleSheet, Text, View, FlatList, Image, TouchableOpacity, ToastAndroid, ActivityIndicator, Dimensions } from 'react-native';
 import Config from '../config';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import postService from '../services/post.service';
@@ -36,8 +36,12 @@ export default class Explore extends Component {
         }))
       })
       .catch(err => {
-        // alert('Internal Server Error')
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // alert('Internal Server Error') 
+        if (Platform.OS === 'ios') {
+          alert('Internal Server Error')
+        } else {
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        }
       })
   }
 
