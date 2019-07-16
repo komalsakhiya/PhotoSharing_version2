@@ -4,10 +4,10 @@ import NavigationService from './services/navigation.service';
 
 axios.interceptors.request.use(async (config) => {
     // Do something before request is sent 
-    // console.log('config in interseptor======================>', config.url.split('/'));
+    console.log('config in interseptor======================>', config.url);
     const urlArray = config.url.split('/');
     // console.log("urlArray==============>", urlArray);
-    if (urlArray[urlArray.length - 1] === 'login' || urlArray[urlArray.length - 1] === 'signup') return config;
+    if (urlArray[urlArray.length - 1] === 'login' || urlArray[urlArray.length - 1] === 'signUp') return config;
     //If the header does not contain the token and the url not public, redirect to login  
     const curruntUser = await AsyncStorage.getItem('curruntUser');
     console.log('curuuntuser---------------------------->', JSON.parse(curruntUser).token);
@@ -32,7 +32,7 @@ axios.interceptors.response.use(
     },
     async (error) => {
         // const originalRequest = error.config
-        // console.log("error in interceptors=============>", error.response.data);
+        console.log("error in interceptors=============>", error);
         // token expired
         if (error.response.status === 401 && (error.response.data == "Unauthorized: Invalid token" || error.response.data == "Unauthorized: No token provided")) {
             await AsyncStorage.setItem('curruntUser', '');

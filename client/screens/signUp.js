@@ -66,7 +66,6 @@ export default class SignUp extends Component {
         .then(() => this.props.navigation.navigate('Login'))
         .catch(err => {
           console.log('err=====>', err);
-          alert(err.response.data.message)
         })
     }
     this.setState({

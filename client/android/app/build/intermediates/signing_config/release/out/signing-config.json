@@ -1,1 +1,1 @@
-{"mName":"release","mStoreFile":"/var/www/html/photsharing_ios/client/android/app/my-release-key.keystore","mStorePassword":"123456","mKeyAlias":"my-key-alias","mKeyPassword":"123456","mStoreType":"jks","mV1SigningEnabled":true,"mV2SigningEnabled":true}
+{"mName":"release","mStoreFile":"/var/www/html/photsharing_ios/client/android/app/my-upload-key.keystore","mStorePassword":"123456","mKeyAlias":"my-key-alias","mKeyPassword":"123456","mStoreType":"jks","mV1SigningEnabled":true,"mV2SigningEnabled":true}

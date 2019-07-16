@@ -54,7 +54,6 @@ export default class Followers extends Component {
             } else {
                ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
             }
-            // alert('Internal Server Error')
          })
    }
 

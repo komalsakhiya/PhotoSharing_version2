@@ -60,8 +60,8 @@ export default class UserProfile extends Component {
    * Get ProfilePhoto 
    */
   profilePic = () => {
-    console.log("profile pic===========================>", this.state.userData.profilePhoto);
-    if (!this.state.userData.profilePhoto) {
+    console.log("profile pic===========================>",global.user.profilePhoto);
+    if (!global.user.profilePhoto) {
       return (
         <Image resizeMode='cover' style={styles.profile}
           source={require('../images/profile.png')}
@@ -178,8 +178,8 @@ const styles = StyleSheet.create({
     width: 80,
     marginTop: 20,
     left: 30,
-    borderColor: '#ad177d',
-    borderWidth: 3,
+    borderColor: 'lightgray',
+    borderWidth: 2,
     margin: 'auto'
   },
   footer: {

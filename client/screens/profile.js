@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, Modal, ActivityIndicator, ToastAndroid, Dimensions } from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, Modal, ActivityIndicator, ToastAndroid, Dimensions } from 'react-native';
 import Config from '../config';
 import { AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -41,13 +41,13 @@ export default class Profile extends Component {
         userId = JSON.parse(curruntUser);
         global.curruntUserId = userId.data._id
         token = userId.token
-        console.log("value===+++++++++++++++++++++===========================>", userId.data._id,token);
+        // console.log("value===+++++++++++++++++++++===========================>", userId.data._id,token);
       }
     } catch (error) {
       if (Platform.OS === 'ios') {
         alert('User Data Not Found')
       } else {
-      ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
       }
       console.log("err=====>", error)
     }
@@ -74,7 +74,7 @@ export default class Profile extends Component {
         if (Platform.OS === 'ios') {
           alert('Internal Server Error')
         } else {
-         ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
         }
       })
   }
@@ -86,14 +86,15 @@ export default class Profile extends Component {
   getPostsByUserId = () => {
     postService.getPostByUserId(global.curruntUserId).
       then((response) => {
-        // console.log('currunt user postss========={}==========>', response.data.data);
+        console.log('currunt user postss========={}==========>', response.data.data);
         // console.log('currunt user postsssssssssssssssssssss===================>', response.data.post);
-        if (response.data.data) {
+        if (response.data.data.length) {
           sorted_posts = response.data.data[0].post.sort((a, b) => {
             return new Date(a.created_date).getTime() -
               new Date(b.created_date).getTime()
           }).reverse();
-          // console.log('sorted post==================================>', sorted_posts);
+          console.log('sorted post==================================>', sorted_posts);
+
           this.setState({
             userPost: response.data.data[0]
           })
@@ -105,7 +106,7 @@ export default class Profile extends Component {
         if (Platform.OS === 'ios') {
           alert('Internal Server Error')
         } else {
-         ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
         }
       })
   }
@@ -151,7 +152,7 @@ export default class Profile extends Component {
     if (!data) {
       RNFetchBlob.fetch('PUT', config.getBaseUrl() + 'user/user', {
         'Content-Type': 'multipart/form-data',
-        'token':token
+        'token': token
       },
         [
           {
@@ -159,8 +160,8 @@ export default class Profile extends Component {
             data: Data
           },
           {
-            name:'userId',
-            data:global.curruntUserId
+            name: 'userId',
+            data: global.curruntUserId
           },
           {
             name: 'profilePhoto',
@@ -175,7 +176,7 @@ export default class Profile extends Component {
             if (Platform.OS === 'ios') {
               alert('Try other userName...')
             } else {
-            ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
+              ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
             }
           } else {
             console.log("in else==========>")
@@ -195,7 +196,7 @@ export default class Profile extends Component {
       if (!data) {
         RNFetchBlob.fetch('PUT', config.getBaseUrl() + 'user/user', {
           'Content-Type': 'multipart/form-data',
-          'token':token
+          'token': token
         },
           [
             {
@@ -203,8 +204,8 @@ export default class Profile extends Component {
               data: Data
             },
             {
-              name:'userId',
-              data:global.curruntUserId
+              name: 'userId',
+              data: global.curruntUserId
             },
           ]).then(async (res) => {
             console.log('response====================>', res.data);
@@ -214,7 +215,7 @@ export default class Profile extends Component {
               if (Platform.OS === 'ios') {
                 alert('Try other username...')
               } else {
-              ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
+                ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
               }
             } else {
               console.log("in else==========>")
@@ -233,7 +234,7 @@ export default class Profile extends Component {
       } else {
         RNFetchBlob.fetch('PUT', config.getBaseUrl() + 'user/user', {
           'Content-Type': 'multipart/form-data',
-          'token':token
+          'token': token
         },
           [
             {
@@ -241,10 +242,10 @@ export default class Profile extends Component {
               data: data
             },
             {
-              name:'userId',
-              data:global.curruntUserId
+              name: 'userId',
+              data: global.curruntUserId
             },
-            
+
           ]).then(async (res) => {
             console.log('response====================>', res.data);
             console.log("=================response============>", JSON.parse(res.data));
@@ -253,7 +254,7 @@ export default class Profile extends Component {
               if (Platform.OS === 'ios') {
                 alert('Try other username...')
               } else {
-              ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
+                ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
               }
             } else {
               console.log("in else==========>")
@@ -273,7 +274,7 @@ export default class Profile extends Component {
     } else {
       RNFetchBlob.fetch('PUT', config.getBaseUrl() + 'user/user', {
         'Content-Type': 'multipart/form-data',
-        'token':token
+        'token': token
       },
         [
           {
@@ -281,8 +282,8 @@ export default class Profile extends Component {
             data: data
           },
           {
-            name:'userId',
-            data:global.curruntUserId
+            name: 'userId',
+            data: global.curruntUserId
           },
           {
             name: 'profilePhoto',
@@ -297,7 +298,7 @@ export default class Profile extends Component {
             if (Platform.OS === 'ios') {
               alert('Try other username....')
             } else {
-            ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
+              ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
             }
           } else {
             console.log("in else==========>")
@@ -549,8 +550,8 @@ export default class Profile extends Component {
             <View style={{ flexDirection: 'row', marginTop: 10 }}>
               <View style={styles.footer}>
                 <Text style={styles.textColor}>{this.state.userPost.post.length}</Text>
-                {this.state.userPost.post.length == 1?<Text>Post</Text>:<Text>Posts</Text>}
-            
+                {this.state.userPost.post.length == 1 ? <Text>Post</Text> : <Text>Posts</Text>}
+
               </View>
               <View style={styles.footer}>
                 <Text style={styles.textColor}>{this.state.userPost.followers.length}</Text>

@@ -4,7 +4,7 @@
             "outputFile": "/var/www/html/photsharing_ios/client/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v18/values-v18.xml",
             "map": [
                 {
-                    "source": "/home/rao/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/c0170fd72d169111b396d8ae2d5bffb8/res/values-v18/values-v18.xml",
+                    "source": "/home/rao/.gradle/caches/transforms-2/files-2.1/d2fddd96debdba976a6fb9e88e7b07c1/res/values-v18/values-v18.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

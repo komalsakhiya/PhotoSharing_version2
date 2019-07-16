@@ -74,7 +74,6 @@ export default class EditPost extends Component {
 					} else {
 						ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
 					}
-					// alert('Internal Server Error')
 				})
 		} else {
 			const payload = {
@@ -96,7 +95,6 @@ export default class EditPost extends Component {
 					} else {
 						ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
 					}
-					// alert('Internal Server Error')
 				})
 		}
 	}

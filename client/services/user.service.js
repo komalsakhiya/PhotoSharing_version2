@@ -9,7 +9,7 @@ export default {
      * Register User
      */
     signUp: (payload) => {
-        return axios.post(config.getBaseUrl() + "user/user", payload).
+        return axios.post(config.getBaseUrl() + "user/signUp", payload).
             then(response => {
                 return response
             })

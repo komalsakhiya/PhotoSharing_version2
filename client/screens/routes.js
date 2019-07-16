@@ -72,7 +72,7 @@ const SignInStack = createStackNavigator({
 	SinglePost: {
 		screen: SinglePost,
 		navigationOptions: {
-			title: 'SinglePost',
+			title: 'Post',
 			headerTitleStyle: { color: '#696969', fontWeight: 'normal' }
 		}
 	},

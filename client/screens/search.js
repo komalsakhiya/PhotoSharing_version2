@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
 import Config from '../config';
 import axios from 'axios';
 import { AsyncStorage } from 'react-native';
@@ -142,6 +142,13 @@ export default class Search extends Component {
               console.log('resultttttttttttttttttttttt====================================>', result);
               const searchUsers = differenceBy(response.data.data, result, '_id');
               console.log('===================myDifferences======================>', searchUsers);
+              if(!searchUsers.length){
+                if (Platform.OS === 'ios') {
+                  alert('No user Found')
+                } else {
+                  ToastAndroid.show('No user Found', ToastAndroid.SHORT);
+                }
+              }
               if (this.state.searchedPost.length != 0) {
                 this.setState({ searchedPost: [] })
               }
@@ -501,7 +508,7 @@ export default class Search extends Component {
           <View style={{ flex: 10 }}>
             <TextInput
               value={this.state.key}
-              onChangeText={(key) => this.setState({ key: key })}
+              onChangeText={(key) => { this.setState({ key: key }), this.Search(key) }}
               placeholder={'Search'}
               style={styles.input}
               autoFocus={true}

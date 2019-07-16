@@ -1,4 +1,4 @@
-#Mon Jul 01 14:32:23 IST 2019
+#Tue Jul 16 17:09:23 IST 2019
 base.0=/var/www/html/photsharing_ios/client/android/app/build/intermediates/transforms/dexMerger/debug/0
 path.0=classes.dex
 renamed.0=classes.dex

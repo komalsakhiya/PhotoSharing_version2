@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ToastAndroid } from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ToastAndroid } from 'react-native';
 import Config from '../config';
 import { AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -72,7 +72,7 @@ export default class Addpost extends Component {
 			if (Platform.OS === 'ios') {
 				alert('Choose Image')
 			} else {
-			ToastAndroid.show('Choose Image', ToastAndroid.SHORT);
+				ToastAndroid.show('Choose Image', ToastAndroid.SHORT);
 			}
 		} else {
 			try {
@@ -82,7 +82,12 @@ export default class Addpost extends Component {
 					console.log("value===+++++++++++++++++++++===========================>", userId.data._id, userId.token);
 				}
 			} catch (error) {
-				console.log("==============");
+				console.log("==============", error);
+				if (Platform.OS === 'ios') {
+					alert('User Data Not Found')
+				} else {
+					ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
+				}
 			};
 			const cleanFilePath = this.state.file.replace('file://', '');
 			RNFetchBlob.fetch('POST', config.getBaseUrl() + 'post/post', {
@@ -118,7 +123,6 @@ export default class Addpost extends Component {
 						await AsyncStorage.setItem('curruntUser', '');
 						this.props.navigation.navigate('Login')
 					} else {
-						// alert("Add Sucessfully...")
 						if (Platform.OS === 'ios') {
 							alert('User Data Not Found')
 						} else {

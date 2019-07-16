@@ -36,7 +36,6 @@ export default class Explore extends Component {
         }))
       })
       .catch(err => {
-        // alert('Internal Server Error') 
         if (Platform.OS === 'ios') {
           alert('Internal Server Error')
         } else {

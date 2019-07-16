@@ -70,13 +70,15 @@ export default class Post extends Component {
       then((response) => {
         // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data);
         // console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", Object.keys(response.data.data.friendsPost[0]).length);
-        if (Object.keys(response.data.data.friendsPost[0]).length > 1) {
-          for (let i = 0; i < response.data.data.friendsPost.length; i++) {
-            for (let j = 0; j < response.data.data.friendsPost[i].like.length; j++) {
-              if (global.curruntUserId == response.data.data.friendsPost[i].like[j]) {
-                response.data.data.friendsPost[i].isLiked = true
-              } else {
-                response.data.data.friendsPost[i].isLiked = false
+        if (response.data.data) {
+          if (Object.keys(response.data.data.friendsPost[0]).length > 1) {
+            for (let i = 0; i < response.data.data.friendsPost.length; i++) {
+              for (let j = 0; j < response.data.data.friendsPost[i].like.length; j++) {
+                if (global.curruntUserId == response.data.data.friendsPost[i].like[j]) {
+                  response.data.data.friendsPost[i].isLiked = true
+                } else {
+                  response.data.data.friendsPost[i].isLiked = false
+                }
               }
             }
           }
@@ -438,189 +440,192 @@ export default class Post extends Component {
     // console.log("post=================friend===============>", this.state.post.friendsPost);
     // console.log("comment================================>", this.state.comment);
     // console.log("all users=====this.state.user===========================>", this.state.allUser);
-    let friendpostarr = this.state.post.friendsPost;
-    if (!friendpostarr) {
-      return (
-        <>
-          <View style={[styles.container, styles.horizontal]}>
-            <ActivityIndicator size="large" color="#ef6858" />
-          </View>
-        </>
-      )
-    }
-    else if (friendpostarr[0].comment.length > 0 && Object.keys(friendpostarr[0]).length > 2 && (Object.keys(friendpostarr[0].comment).length > 2 || Object.keys(friendpostarr[0].comment).length >= 0)) {
-      return (
-        <>
-          <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
-            <Text style={{ fontSize: 20, top: 10, left: 20 }}>Posts</Text>
-            <TouchableOpacity
-              style={{ position: 'absolute', right: 10, top: 15, }}
-              onPress={() => this.props.navigation.navigate('Message')}
-            >
-              <Image style={{ height: 25, width: 25 }}
-                source={require('../images/Share_icon.png')}
-              />
-            </TouchableOpacity>
-          </View>
+    // console.log("post==========this.state.post==========>", this.state.post)
+    if (this.state.post) {
+      let friendpostarr = this.state.post.friendsPost;
+      if (!friendpostarr) {
+        return (
+          <>
+            <View style={[styles.container, styles.horizontal]}>
+              <ActivityIndicator size="large" color="#ef6858" />
+            </View>
+          </>
+        )
+      }
+      else if (friendpostarr[0].comment.length > 0 && Object.keys(friendpostarr[0]).length > 2 && (Object.keys(friendpostarr[0].comment).length > 2 || Object.keys(friendpostarr[0].comment).length >= 0)) {
+        return (
+          <>
+            <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
+              <Text style={{ fontSize: 20, top: 10, left: 20 }}>Posts</Text>
+              <TouchableOpacity
+                style={{ position: 'absolute', right: 10, top: 15, }}
+                onPress={() => this.props.navigation.navigate('Message')}
+              >
+                <Image style={{ height: 25, width: 25 }}
+                  source={require('../images/Share_icon.png')}
+                />
+              </TouchableOpacity>
+            </View>
 
-          {/* posts  */}
-          <FlatList
-            data={friendpostarr}
-            renderItem={({ item }) =>
-              <View style={styles.card}>
-                <View>
-                  <View style={{ flexDirection: 'column' }}>
-                    <View style={{ flexDirection: 'row' }}>
-                      <View style={{ flex: 10 }}>
-                        <View style={{ flexDirection: 'row' }}>
-                          <View>
-                            {this.profilePic(item.userId.profilePhoto)}
-                          </View>
-                          <View>
-                            <TouchableOpacity
-                              onPress={() => this.props.navigation.navigate('UserProfile', { userId: item.userId })}
-                            >
-                              <Text style={styles.userName}>{item.userId.userName}</Text>
-                            </TouchableOpacity>
+            {/* posts  */}
+            <FlatList
+              data={friendpostarr}
+              renderItem={({ item }) =>
+                <View style={styles.card}>
+                  <View>
+                    <View style={{ flexDirection: 'column' }}>
+                      <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flex: 10 }}>
+                          <View style={{ flexDirection: 'row' }}>
+                            <View>
+                              {this.profilePic(item.userId.profilePhoto)}
+                            </View>
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => this.props.navigation.navigate('UserProfile', { userId: item.userId })}
+                              >
+                                <Text style={styles.userName}>{item.userId.userName}</Text>
+                              </TouchableOpacity>
+                            </View>
                           </View>
                         </View>
+                        <View style={{ flex: 1 }}>
+                          <Icon onPress={() => { this.savePostImage(item.images) }}
+                            name="file-download"
+                            size={30}
+                            color={this.state.ButtonStateHolder ? '#C0C0C0' : '#696969'}
+                            disabled={this.state.ButtonStateHolder}
+                            style={{ marginTop: 13 }}
+                          />
+                          {/* <Toast visible={this.state.visible} message="Downloading..." /> */}
+                        </View>
                       </View>
-                      <View style={{ flex: 1 }}>
-                        <Icon onPress={() => { this.savePostImage(item.images) }}
-                          name="file-download"
-                          size={30}
-                          color={this.state.ButtonStateHolder ? '#C0C0C0' : '#696969'}
-                          disabled={this.state.ButtonStateHolder}
-                          style={{ marginTop: 13 }}
-                        />
-                        {/* <Toast visible={this.state.visible} message="Downloading..." /> */}
-                      </View>
+                      <Image resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
                     </View>
-                    <Image resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
                   </View>
-                </View>
-                <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                  <View style={{ flexDirection: 'row', flex: 9 }}>
-                    {item.isLiked ? (<Icon name="favorite"
-                      size={25}
-                      onPress={() => this.like(item._id)}
-                      style={{ marginLeft: 10, color: '#cd1d1f' }}
-                    />) : (<Icon name="favorite-border"
-                      size={25}
-                      onPress={() => this.like(item._id)}
-                      style={styles.like}
-                    />)}
-                    {item.like.length > 0 ? ((item.like.length == 1 ? (<Text style={styles.likeText}>{item.like.length} like</Text>) : (<Text style={styles.likeText}>{item.like.length} likes</Text>))) : (null)}
-                  </View>
-                  <View style={{ flexDirection: 'row', flex: 3, right: 10, position: 'absolute' }}>
-                    {item.sharePostCount != 0 ? (<Text style={[styles.likeText, { marginRight: 9 }]}>{item.sharePostCount} Share</Text>) : (null)}
-                    <TouchableOpacity
-                      onPress={() => this.sharePost(item._id)}
-                    >
-                      <Image style={{ height: 20, width: 20, marginTop: 7 }}
-                        source={require('../images/Share_icon.png')}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={{ marginBottom: 10 }}>
-                  <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-                    <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('UserProfile', {
-                        userId: item.userId
-                      })}
-                    >
-                      {item.content ? (<Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{item.userId.userName}</Text>) : (null)}
-                    </TouchableOpacity>
-                    <ParsedText
-                      style={styles.text}
-                      parse={
-                        [
-                          { pattern: /#(\w+)/, style: styles.hashTag },
-                        ]
-                      }
-                      childrenProps={{ allowFontScaling: false }}
-                    >
-                      {item.content}
-                    </ParsedText>
-                  </View>
-                  <View style={{ marginBottom: 10, flexDirection: 'row' }}>
-                    <View style={{ flex: 10 }}>
-                      <TextInput
-                        onChangeText={(text) => this.setState({ comment: text })}
-                        placeholder={'Comment here....'}
-                        style={styles.input}
-                      />
+                  <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                    <View style={{ flexDirection: 'row', flex: 9 }}>
+                      {item.isLiked ? (<Icon name="favorite"
+                        size={25}
+                        onPress={() => this.like(item._id)}
+                        style={{ marginLeft: 10, color: '#cd1d1f' }}
+                      />) : (<Icon name="favorite-border"
+                        size={25}
+                        onPress={() => this.like(item._id)}
+                        style={styles.like}
+                      />)}
+                      {item.like.length > 0 ? ((item.like.length == 1 ? (<Text style={styles.likeText}>{item.like.length} like</Text>) : (<Text style={styles.likeText}>{item.like.length} likes</Text>))) : (null)}
                     </View>
-                    <View style={{ flex: 1 }}>
-                      <TouchableOpacity style={styles.button}
-                        onPress={() => this.comment(item._id)}
-                        disabled={this.state.ButtonStateHolder}>
-                        <Icon
-                          name="send"
-                          size={25}
-                          color={this.state.ButtonStateHolder ? '#C0C0C0' : '#696969'}
+                    <View style={{ flexDirection: 'row', flex: 3, right: 10, position: 'absolute' }}>
+                      {item.sharePostCount != 0 ? (<Text style={[styles.likeText, { marginRight: 9 }]}>{item.sharePostCount} Share</Text>) : (null)}
+                      <TouchableOpacity
+                        onPress={() => this.sharePost(item._id)}
+                      >
+                        <Image style={{ height: 20, width: 20, marginTop: 7 }}
+                          source={require('../images/Share_icon.png')}
                         />
                       </TouchableOpacity>
-                      <Toast ref="toast" />
                     </View>
                   </View>
-                  <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate('SinglePost', { id: item._id })}
-                  >
-                  </TouchableOpacity>
-                  {this.displayCommentCount(item)}
-                  {this.displayComment(item)}
-                </View>
-
-                {/** All User for Share Post */}
-                <View style={{ marginBottom: 10 }}>
-                  <RBSheet
-                    ref={ref => {
-                      this.RBSheet = ref;
-                    }}
-                    height={400}
-                    duration={250}
-                    customStyles={{
-                      container: {
-                        borderTopLeftRadius: 15,
-                        borderTopRightRadius: 15
-                      }
-                    }}
-                  >
-                    <ScrollView>
-                      <FlatList
-                        data={this.state.allUser}
-                        renderItem={({ item }) =>
-                          <View style={{ flexDirection: 'row' }}>
-                            <View style={{ flex: 2 }}>
-                              {this.profilePic(item.profilePhoto)}
-                            </View>
-                            <TouchableOpacity
-                              style={{ flex: 8 }}
-                              onPress={() => { this.props.navigation.navigate('UserProfile', { userId: item }), this.RBSheet.close(); }}
-                            >
-                              <Text style={{ marginTop: 10, color: 'black', fontSize: 18, marginLeft: 10 }}>{item.userName}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              style={[styles.button1, { backgroundColor: this.state.ButtonStateHolder ? '#607D8B' : '#0099e7', flex: 3 }]}
-                              disabled={this.state.ButtonStateHolder}
-                              onPress={() => this.sendPost(item._id)}
-                            >
-                              <Text style={{ textAlign: 'center', marginTop: 5, color: 'white' }}>Send</Text>
-                            </TouchableOpacity>
-                          </View>
-
+                  <View style={{ marginBottom: 10 }}>
+                    <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                      <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate('UserProfile', {
+                          userId: item.userId
+                        })}
+                      >
+                        {item.content ? (<Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{item.userId.userName}</Text>) : (null)}
+                      </TouchableOpacity>
+                      <ParsedText
+                        style={styles.text}
+                        parse={
+                          [
+                            { pattern: /#(\w+)/, style: styles.hashTag },
+                          ]
                         }
-                      />
-                    </ScrollView>
-                  </RBSheet>
+                        childrenProps={{ allowFontScaling: false }}
+                      >
+                        {item.content}
+                      </ParsedText>
+                    </View>
+                    <View style={{ marginBottom: 10, flexDirection: 'row' }}>
+                      <View style={{ flex: 10 }}>
+                        <TextInput
+                          onChangeText={(text) => this.setState({ comment: text })}
+                          placeholder={'Comment here....'}
+                          style={styles.input}
+                        />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <TouchableOpacity style={styles.button}
+                          onPress={() => this.comment(item._id)}
+                          disabled={this.state.ButtonStateHolder}>
+                          <Icon
+                            name="send"
+                            size={25}
+                            color={this.state.ButtonStateHolder ? '#C0C0C0' : '#696969'}
+                          />
+                        </TouchableOpacity>
+                        <Toast ref="toast" />
+                      </View>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => this.props.navigation.navigate('SinglePost', { id: item._id })}
+                    >
+                    </TouchableOpacity>
+                    {this.displayCommentCount(item)}
+                    {this.displayComment(item)}
+                  </View>
+
+                  {/** All User for Share Post */}
+                  <View style={{ marginBottom: 10 }}>
+                    <RBSheet
+                      ref={ref => {
+                        this.RBSheet = ref;
+                      }}
+                      height={400}
+                      duration={250}
+                      customStyles={{
+                        container: {
+                          borderTopLeftRadius: 15,
+                          borderTopRightRadius: 15
+                        }
+                      }}
+                    >
+                      <ScrollView>
+                        <FlatList
+                          data={this.state.allUser}
+                          renderItem={({ item }) =>
+                            <View style={{ flexDirection: 'row' }}>
+                              <View style={{ flex: 2 }}>
+                                {this.profilePic(item.profilePhoto)}
+                              </View>
+                              <TouchableOpacity
+                                style={{ flex: 8 }}
+                                onPress={() => { this.props.navigation.navigate('UserProfile', { userId: item }), this.RBSheet.close(); }}
+                              >
+                                <Text style={{ marginTop: 10, color: 'black', fontSize: 18, marginLeft: 10 }}>{item.userName}</Text>
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                style={[styles.button1, { backgroundColor: this.state.ButtonStateHolder ? '#607D8B' : '#0099e7', flex: 3 }]}
+                                disabled={this.state.ButtonStateHolder}
+                                onPress={() => this.sendPost(item._id)}
+                              >
+                                <Text style={{ textAlign: 'center', marginTop: 5, color: 'white' }}>Send</Text>
+                              </TouchableOpacity>
+                            </View>
+
+                          }
+                        />
+                      </ScrollView>
+                    </RBSheet>
+                  </View>
                 </View>
-              </View>
-            }
-          />
-        </>
-      );
+              }
+            />
+          </>
+        );
+      }
     } else {
       return (
         <>
