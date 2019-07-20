@@ -21,6 +21,7 @@ export default class Post extends Component {
   constructor(props) {
     super(props)
     global.curruntUserId = "",
+      global.message = ""
     this.springValue = new Animated.Value(100);
     this.state = {
       post: [],
@@ -38,7 +39,7 @@ export default class Post extends Component {
       backClickCount: 0,
       page: 1,
       postIndex: '',
-      curruntUserData:[]
+      curruntUserData: [],
     };
     this.props.navigation.addListener(
       'didFocus',
@@ -66,25 +67,25 @@ export default class Post extends Component {
     this.getUserById();
   }
 
-/**
- * @param {String} userId
- * Get User By Id
- */
-getUserById = () =>{
-  userService.getUserById(global.curruntUserId).
-  then(response => {
-    // console.log('currunt user===================>', response.data);
-    // console.log('currunt user post===================>', response.post);
-    this.setState({
-      curruntUserData: response.data.data
-    })
-    console.log("curruntUser================>",this.state.curruntUserData)
-  })
-  .catch(err => {
-    console.log('er=====>', err);
-    alertService.alerAndToast("Internal Server Error");
-  })
-}
+  /**
+   * @param {String} userId
+   * Get User By Id
+   */
+  getUserById = () => {
+    userService.getUserById(global.curruntUserId).
+      then(response => {
+        // console.log('currunt user===================>', response.data);
+        // console.log('currunt user post===================>', response.post);
+        this.setState({
+          curruntUserData: response.data.data
+        })
+        console.log("curruntUser================>", this.state.curruntUserData)
+      })
+      .catch(err => {
+        console.log('er=====>', err);
+        alertService.alerAndToast("Internal Server Error");
+      })
+  }
 
   /**
    * Get Friends Posts
@@ -106,10 +107,13 @@ getUserById = () =>{
     let pageNumber = this.state.page
     postService.getFriendsPost(global.curruntUserId, pageNumber).
       then((response) => {
-        // console.log('response.data.data===============>',response.data.data)
+        console.log('response.data.data===============>', response.data)
         // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data.friendsPost.length);
         // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data.friendsPost);
         // console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", Object.keys(response.data.data.friendsPost[0]).length);
+        if (response.data.status === 404) {
+          global.message = response.data.message
+        }
         if (response.data.data) {
           if (Object.keys(response.data.data).length > 1) {
             for (let i = 0; i < response.data.data.friendsPost.length; i++) {
@@ -127,6 +131,7 @@ getUserById = () =>{
             // post:response.data.data.friendsPost
           }))
         }
+
       })
       .catch(err => {
         console.log('er=====>', err);
@@ -180,7 +185,7 @@ getUserById = () =>{
         ButtonStateHolder: false
       })
     } else {
-      console.log('postId============================>', postId,userName);
+      console.log('postId============================>', postId, userName);
       const payload = {
         "postId": postId,
         "userId": global.curruntUserId,
@@ -189,8 +194,8 @@ getUserById = () =>{
       postService.addComment(payload).
         then(function (response) {
           console.log("response============>", response.data);
-           commentData = response.data.data
-          console.log("comment successfull",commentData);
+          commentData = response.data.data
+          console.log("comment successfull", commentData);
         }).then(() => {
           console.log("postttt ============ in comment()=============>", this.state.post[index].comment)
           // this.setState({ page: 1, post: [] })
@@ -487,7 +492,7 @@ getUserById = () =>{
       }
       return null;
     };
-    // console.log("postttttttttttttttttttttt================================>", this.state.post);
+    console.log("postttttttttttttttttttttt================================>", this.state.post, global.message);
     // console.log("post=================friend===============>", this.state.post.friendsPost);
     // console.log("comment================================>", this.state.comment);
     // console.log("all users=====this.state.user===========================>", this.state.allUser);
@@ -690,13 +695,11 @@ getUserById = () =>{
           </>
         );
       }
-    } else {
+    } else if (global.message) {
       return (
         <>
-          {/* Header */}
           <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
             <Text style={{ fontSize: 20, top: 10, left: 20 }}>Posts</Text>
-            {/* Messege Icon */}
             <TouchableOpacity
               style={{ position: 'absolute', right: 10, top: 15, }}
               onPress={() => this.props.navigation.navigate('Message')}
@@ -706,11 +709,37 @@ getUserById = () =>{
               />
             </TouchableOpacity>
           </View>
-          {/** There are no post */}
           <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-            <Text >No post yet</Text>
+            <Text style={{ fontSize: 20, marginBottom: 20 }}>No Post</Text>
           </View>
         </>
+      )
+    } else {
+      return (
+        <>
+          <View style={[styles.container, styles.horizontal]}>
+            <ActivityIndicator size="large" color="#ef6858" />
+          </View>
+        </>
+        // <>
+        //   {/* Header */}
+        //   <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
+        //     <Text style={{ fontSize: 20, top: 10, left: 20 }}>Posts</Text>
+        //     {/* Messege Icon */}
+        //     <TouchableOpacity
+        //       style={{ position: 'absolute', right: 10, top: 15, }}
+        //       onPress={() => this.props.navigation.navigate('Message')}
+        //     >
+        //       <Image style={{ height: 25, width: 25 }}
+        //         source={require('../images/Share_icon.png')}
+        //       />
+        //     </TouchableOpacity>
+        //   </View>
+        //   {/** There are no post */}
+        //   <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+        //     <Text >No post yet</Text>
+        //   </View>
+        // </>
       )
     }
   }
