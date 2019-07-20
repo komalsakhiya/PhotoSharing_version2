@@ -5,7 +5,7 @@ const config = new Config();
 
 export default {
     /**
-     * @param {*} pageNumber
+     * @param {Number} pageNumber
      * Get All Posts 
     */
 
@@ -16,7 +16,7 @@ export default {
     },
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * Edit Post
      */
     editPost: (payload) => {
@@ -29,7 +29,7 @@ export default {
     },
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * Search HashTag
      */
     SearchHashTag: (payload) => {
@@ -41,7 +41,7 @@ export default {
     },
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * Like Post
      */
     likePost: (payload) => {
@@ -53,7 +53,7 @@ export default {
     },
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * Add Comment
      */
     addComment: (payload) => {
@@ -65,7 +65,7 @@ export default {
     },
 
     /**
-     * @param {*} Id
+     * @param {String} Id
      * Get Shared Posts
      */
     getsharedPosts: (Id) => {
@@ -77,7 +77,7 @@ export default {
     },
 
     /**
-     * @param {*} postId 
+     * @param {String} postId 
      * Get POse by Id 
      */
     getPostById: (postId) => {
@@ -89,7 +89,7 @@ export default {
     },
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * Delete Post
      */
     deletePost: (payload) => {
@@ -102,7 +102,7 @@ export default {
     },
 
     /**
-     * @param {*} userId
+     * @param {String} userId
      * Get Post by UserId
      */
     getPostByUserId: (userId) => {
@@ -115,12 +115,12 @@ export default {
 
 
     /**
-     * @param {*} userId
+     * @param {String} userId
      * get Friends Posts
      */
-    getFriendsPost: (userId) => {
+    getFriendsPost: (userId,pageNumber) => {
         console.log('get friend post called: ', userId);
-        return axios.get(config.getBaseUrl() + "post/get-my-friends-post/" + userId).
+        return axios.get(config.getBaseUrl() + "post/get-my-friends-post/" + userId + "?offset=" + pageNumber).
             then(response => {
                 return response
             })
@@ -128,7 +128,7 @@ export default {
     },
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * send post
      */
     sendPost: (payload) => {

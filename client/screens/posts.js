@@ -8,6 +8,11 @@ import ParsedText from 'react-native-parsed-text';
 import RBSheet from "react-native-raw-bottom-sheet";
 import postService from '../services/post.service';
 import userService from '../services/user.service';
+import alertService from '../services/alert.service';
+import imageCacheHoc from 'react-native-image-cache-hoc';
+const CacheableImage = imageCacheHoc(Image, {
+  validProtocols: ['http', 'https']
+});
 const config = new Config();
 const { width } = Dimensions.get('screen');
 
@@ -15,7 +20,7 @@ const { width } = Dimensions.get('screen');
 export default class Post extends Component {
   constructor(props) {
     super(props)
-    global.curruntUserId = ""
+    global.curruntUserId = "",
     this.springValue = new Animated.Value(100);
     this.state = {
       post: [],
@@ -32,11 +37,14 @@ export default class Post extends Component {
       postId: '',
       backClickCount: 0,
       page: 1,
+      postIndex: '',
+      curruntUserData:[]
     };
     this.props.navigation.addListener(
       'didFocus',
       payload => {
-        this.componentDidMount();
+        this.setState({ post: [], page: 1 })
+        this.getFriendsPost();
       });
   }
 
@@ -47,31 +55,63 @@ export default class Post extends Component {
       if (curruntUser) {
         userId = JSON.parse(curruntUser);
         console.log("value===+++++++++in post++++++++++++===========================>", userId.data._id);
-        global.curruntUserId = userId.data._id
+        global.curruntUserId = userId.data._id;
       }
     } catch (error) {
-      if (Platform.OS === 'ios') {
-        alert('User Data Not Found')
-      } else {
-        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-        Console.log("errr=====>", error)
-      }
+      alertService.alerAndToast("User Data Not Found");
+      console.log("errr=====>", error)
     }
-    this.getFriendsPost();
+    // this.getFriendsPost();
     this.getAllUser();
+    this.getUserById();
   }
+
+/**
+ * @param {String} userId
+ * Get User By Id
+ */
+getUserById = () =>{
+  userService.getUserById(global.curruntUserId).
+  then(response => {
+    // console.log('currunt user===================>', response.data);
+    // console.log('currunt user post===================>', response.post);
+    this.setState({
+      curruntUserData: response.data.data
+    })
+    console.log("curruntUser================>",this.state.curruntUserData)
+  })
+  .catch(err => {
+    console.log('er=====>', err);
+    alertService.alerAndToast("Internal Server Error");
+  })
+}
 
   /**
    * Get Friends Posts
    * @param {*} CurruntuserId
    */
-  getFriendsPost = () => {
-    postService.getFriendsPost(global.curruntUserId).
+  getFriendsPost = async () => {
+    let userId;
+    try {
+      const curruntUser = await AsyncStorage.getItem('curruntUser');
+      if (curruntUser) {
+        userId = JSON.parse(curruntUser);
+        console.log("value===+++++++++in post++++++++++++===========================>", userId.data._id);
+        global.curruntUserId = userId.data._id
+      }
+    } catch (error) {
+      alertService.alerAndToast("User Data Not Found");
+      Console.log("errr=====>", error)
+    }
+    let pageNumber = this.state.page
+    postService.getFriendsPost(global.curruntUserId, pageNumber).
       then((response) => {
-        // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data);
+        // console.log('response.data.data===============>',response.data.data)
+        // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data.friendsPost.length);
+        // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data.friendsPost);
         // console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", Object.keys(response.data.data.friendsPost[0]).length);
         if (response.data.data) {
-          if (Object.keys(response.data.data.friendsPost[0]).length > 1) {
+          if (Object.keys(response.data.data).length > 1) {
             for (let i = 0; i < response.data.data.friendsPost.length; i++) {
               for (let j = 0; j < response.data.data.friendsPost[i].like.length; j++) {
                 if (global.curruntUserId == response.data.data.friendsPost[i].like[j]) {
@@ -82,29 +122,26 @@ export default class Post extends Component {
               }
             }
           }
+          this.setState(prevState => ({
+            post: [...prevState.post, ...response.data.data.friendsPost]
+            // post:response.data.data.friendsPost
+          }))
         }
-        this.setState(prevState => ({
-          post: response.data.data
-        }))
       })
       .catch(err => {
         console.log('er=====>', err);
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-          // alert('Internal Server Error')
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
   /**
-   * @param {*} postId
+   * @param {String} postId,index,isLiked
    * Like Post
    */
-  like = async (postId) => {
-    console.log('postId============================>', postId);
-    let payload = {
+  like = async (postId, index, isLiked) => {
+    let likearr;
+    console.log('postId============================>', postId, index, isLiked);
+    const payload = {
       "postId": postId,
       "userId": global.curruntUserId
     }
@@ -112,28 +149,28 @@ export default class Post extends Component {
       then(function (response) {
         console.log("-------------------------------------------------------------------------------------------");
         console.log("response of  like=================>", response.data);
+        likearr = response.data.data.like;
         console.log("like successfull");
       })
       .then(() => {
-        this.getFriendsPost();
+        console.log(this.state.post[index].isLiked);
+        this.state.post[index].isLiked = isLiked;
+        this.state.post[index].like = likearr;
+        this.setState({ post: this.state.post })
       })
       .catch(err => {
         console.log('er=====>', err);
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-          // alert('Internal Server Error')
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
   /**
-   * @param {*} postId  
+   * @param {String} postId  
    *  Add Comment 
   */
-  comment = async (postId) => {
-    console.log('data=============================>', postId);
+  comment = async (postId, index) => {
+    let commentData;
+    console.log('data=============================>', postId, index);
     this.setState({
       ButtonStateHolder: true
     })
@@ -143,30 +180,36 @@ export default class Post extends Component {
         ButtonStateHolder: false
       })
     } else {
-      console.log('postId============================>', postId);
-      let apiBaseUrl = config.getBaseUrl() + "comment/addcomment";
-      console.log('apiBaseUrl===========>', apiBaseUrl);
-      let payload = {
+      console.log('postId============================>', postId,userName);
+      const payload = {
         "postId": postId,
         "userId": global.curruntUserId,
         "comment": this.state.comment
       }
       postService.addComment(payload).
         then(function (response) {
-          console.log("response============>", response.data)
-          console.log("comment successfull");
+          console.log("response============>", response.data);
+           commentData = response.data.data
+          console.log("comment successfull",commentData);
         }).then(() => {
-
-          this.getFriendsPost();
+          console.log("postttt ============ in comment()=============>", this.state.post[index].comment)
+          // this.setState({ page: 1, post: [] })
+          // this.getFriendsPost();
+          const addComment = {
+            comment: commentData.comment,
+            userId: {
+              _id: this.state.curruntUserData._id,
+              userName: this.state.curruntUserData.userName,
+              profilePhoto: this.state.curruntUserData.profilePhoto
+            }
+          }
+          console.log('addComment:---------------------------- ', addComment);
+          this.state.post[index].comment.push(addComment);
+          this.setState({ post: this.state.post });
         })
         .catch(err => {
           console.log('er=====>', err);
-          if (Platform.OS === 'ios') {
-            alert('Internal Server Error')
-          } else {
-            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-            // alert('Internal Server Error')
-          }
+          alertService.alerAndToast("Internal Server Error");
         })
       this.setState({
         comment: '',
@@ -239,7 +282,7 @@ export default class Post extends Component {
       )
     } else {
       return (
-        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + profilePhoto }} />
+        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + profilePhoto }} permanent={true} />
       )
     }
   }
@@ -258,7 +301,7 @@ export default class Post extends Component {
       )
     } else {
       return (
-        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + comment.userId.profilePhoto }} />
+        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + comment.userId.profilePhoto }} permanent={true} />
       )
     }
   }
@@ -269,6 +312,7 @@ export default class Post extends Component {
    */
   displayComment = (item) => {
     // console.log("item in displaycomment=======================>", item)
+    // Comment is more than three
     if (item.comment.length > 3) {
       // console.log("=======moe than 3 comments===========");
       return (
@@ -280,6 +324,7 @@ export default class Post extends Component {
             // console.log("========================in If={{{{{{{}}}}}}}======================", count, comment.userId.userName);
             return (
               <View>
+                {/* Display UserName  and Comment Content*/}
                 <View style={{ flexDirection: 'row' }}>
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
@@ -302,15 +347,17 @@ export default class Post extends Component {
         }).reverse()
       )
     } else {
+      // Comment are less than three
       return (
         item.comment.map((comment) => {
           // console.log('comment ======================>', comment);
-          let count = Object.keys(comment).length;
+          const count = Object.keys(comment).length;
           // console.log("=]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]count=============>", count);
           if (comment && count > 0) {
             // console.log("========================in If{={{}}}======================", count, comment.userId.userName);
             return (
               <View>
+                {/* Display UserName  and Comment Content*/}
                 <View style={{ flexDirection: 'row' }}>
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
@@ -345,6 +392,7 @@ export default class Post extends Component {
     // console.log('count=======in count=============>', count);
     if (count) {
       return (
+        // Display comment count
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('SinglePost', { id: item._id })}>
           <Text style={{ marginLeft: 10 }}>All {item.comment.length} comments</Text>
@@ -369,21 +417,17 @@ export default class Post extends Component {
       })
       .catch(err => {
         console.log('er=====>', err);
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-          // alert('Internal Server Error')
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
   /** Open RBSheet For Share Post  */
-  sharePost = (postId) => {
-    console.log(" share postid ====================================> ", postId);
+  sharePost = (postId, index) => {
+    console.log(" share postid ====================================> ", postId, index);
     this.RBSheet.open();
     this.setState({
-      postId: postId
+      postId: postId,
+      postIndex: index
     })
   }
 
@@ -392,7 +436,7 @@ export default class Post extends Component {
    * shared Post to user
    */
   sendPost = (userId) => {
-    console.log("========================sharepost ======================================", userId, this.state.postId, global.curruntUserId);
+    console.log("========================sharepost ======================================", userId, this.state.postId, global.curruntUserId, this.state.postIndex);
     this.setState({ ButtonStateHolder: true })
     let payload = {
       "postId": this.state.postId,
@@ -403,22 +447,29 @@ export default class Post extends Component {
     postService.sendPost(payload).
       then(function (response) {
         console.log("Shared post successfullllllllllllll=================", response.data);
+        // sharePostCount = response
       })
       .then(() => {
         this.RBSheet.close();
         this.setState({ ButtonStateHolder: false })
-        this.getFriendsPost();
+        this.state.post[this.state.postIndex].sharePostCount = this.state.post[this.state.postIndex].sharePostCount + 1;
+        this.setState({ post: this.state.post })
+        // this.state.post[index]
+        // this.getFriendsPost();
       })
       .catch(err => {
         console.log('er=====>', err);
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
         this.setState({ ButtonStateHolder: false })
-        // alert('Internal Server Error')
       })
+  }
+
+  /** 
+  * handle page number for get post images
+  */
+  handleEnd = () => {
+    console.log("handleend callll==================>", this.state.page);
+    this.setState(prevState => ({ page: prevState.page + 1 }), () => this.getFriendsPost());
   }
 
 
@@ -441,8 +492,10 @@ export default class Post extends Component {
     // console.log("comment================================>", this.state.comment);
     // console.log("all users=====this.state.user===========================>", this.state.allUser);
     // console.log("post==========this.state.post==========>", this.state.post)
-    if (this.state.post) {
-      let friendpostarr = this.state.post.friendsPost;
+    if (this.state.post.length) {
+      let friendpostarr = this.state.post;
+      console.log('friendpostarr==============>', friendpostarr.length)
+      // console.log('friendpostarr==============>',friendpostarr)
       if (!friendpostarr) {
         return (
           <>
@@ -455,6 +508,7 @@ export default class Post extends Component {
       else if (friendpostarr[0].comment.length > 0 && Object.keys(friendpostarr[0]).length > 2 && (Object.keys(friendpostarr[0].comment).length > 2 || Object.keys(friendpostarr[0].comment).length >= 0)) {
         return (
           <>
+            {/* header */}
             <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
               <Text style={{ fontSize: 20, top: 10, left: 20 }}>Posts</Text>
               <TouchableOpacity
@@ -470,11 +524,18 @@ export default class Post extends Component {
             {/* posts  */}
             <FlatList
               data={friendpostarr}
-              renderItem={({ item }) =>
+              keyExtractor={(index) => index}
+              onEndReachedThreshold={0.6}
+              onEndReached={() => {
+                this.handleEnd();
+              }}
+              onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
+              renderItem={({ item, index }) =>
                 <View style={styles.card}>
                   <View>
                     <View style={{ flexDirection: 'column' }}>
                       <View style={{ flexDirection: 'row' }}>
+                        {/* Display user profilepic And userNAme */}
                         <View style={{ flex: 10 }}>
                           <View style={{ flexDirection: 'row' }}>
                             <View>
@@ -489,6 +550,7 @@ export default class Post extends Component {
                             </View>
                           </View>
                         </View>
+                        {/* Image Download Icon */}
                         <View style={{ flex: 1 }}>
                           <Icon onPress={() => { this.savePostImage(item.images) }}
                             name="file-download"
@@ -497,29 +559,31 @@ export default class Post extends Component {
                             disabled={this.state.ButtonStateHolder}
                             style={{ marginTop: 13 }}
                           />
-                          {/* <Toast visible={this.state.visible} message="Downloading..." /> */}
                         </View>
                       </View>
-                      <Image resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
+                      {/* Display post Image */}
+                      <CacheableImage resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} permanent={true} />
                     </View>
                   </View>
                   <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                    {/* Display Like Icon And Counts */}
                     <View style={{ flexDirection: 'row', flex: 9 }}>
                       {item.isLiked ? (<Icon name="favorite"
                         size={25}
-                        onPress={() => this.like(item._id)}
+                        onPress={() => this.like(item._id, index, false)}
                         style={{ marginLeft: 10, color: '#cd1d1f' }}
                       />) : (<Icon name="favorite-border"
                         size={25}
-                        onPress={() => this.like(item._id)}
+                        onPress={() => this.like(item._id, index, true)}
                         style={styles.like}
                       />)}
                       {item.like.length > 0 ? ((item.like.length == 1 ? (<Text style={styles.likeText}>{item.like.length} like</Text>) : (<Text style={styles.likeText}>{item.like.length} likes</Text>))) : (null)}
                     </View>
+                    {/* Share Post Icon */}
                     <View style={{ flexDirection: 'row', flex: 3, right: 10, position: 'absolute' }}>
                       {item.sharePostCount != 0 ? (<Text style={[styles.likeText, { marginRight: 9 }]}>{item.sharePostCount} Share</Text>) : (null)}
                       <TouchableOpacity
-                        onPress={() => this.sharePost(item._id)}
+                        onPress={() => this.sharePost(item._id, index)}
                       >
                         <Image style={{ height: 20, width: 20, marginTop: 7 }}
                           source={require('../images/Share_icon.png')}
@@ -528,6 +592,7 @@ export default class Post extends Component {
                     </View>
                   </View>
                   <View style={{ marginBottom: 10 }}>
+                    {/* Post caption  */}
                     <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                       <TouchableOpacity
                         onPress={() => this.props.navigation.navigate('UserProfile', {
@@ -548,6 +613,7 @@ export default class Post extends Component {
                         {item.content}
                       </ParsedText>
                     </View>
+                    {/* Comment Input box */}
                     <View style={{ marginBottom: 10, flexDirection: 'row' }}>
                       <View style={{ flex: 10 }}>
                         <TextInput
@@ -558,7 +624,7 @@ export default class Post extends Component {
                       </View>
                       <View style={{ flex: 1 }}>
                         <TouchableOpacity style={styles.button}
-                          onPress={() => this.comment(item._id)}
+                          onPress={() => this.comment(item._id, index)}
                           disabled={this.state.ButtonStateHolder}>
                           <Icon
                             name="send"
@@ -569,11 +635,9 @@ export default class Post extends Component {
                         <Toast ref="toast" />
                       </View>
                     </View>
-                    <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('SinglePost', { id: item._id })}
-                    >
-                    </TouchableOpacity>
+                    {/* Display comment count */}
                     {this.displayCommentCount(item)}
+                    {/* Display comment list */}
                     {this.displayComment(item)}
                   </View>
 
@@ -629,8 +693,10 @@ export default class Post extends Component {
     } else {
       return (
         <>
+          {/* Header */}
           <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
             <Text style={{ fontSize: 20, top: 10, left: 20 }}>Posts</Text>
+            {/* Messege Icon */}
             <TouchableOpacity
               style={{ position: 'absolute', right: 10, top: 15, }}
               onPress={() => this.props.navigation.navigate('Message')}
@@ -748,7 +814,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     left: 10,
     borderColor: 'lightgray',
-    borderWidth: 2,
+    borderWidth: 1,
   },
   hashTag: {
     color: '#3F729B'

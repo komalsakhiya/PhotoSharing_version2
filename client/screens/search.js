@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, Text, View, TextInput, FlatList, Image, ScrollView, TouchableOpacity, ToastAndroid, Dimensions } from 'react-native';
 import Config from '../config';
-import axios from 'axios';
 import { AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ParsedText from 'react-native-parsed-text';
@@ -11,6 +10,11 @@ import _ from 'lodash';
 import differenceBy from 'lodash/differenceBy';
 import userService from '../services/user.service';
 import postService from '../services/post.service';
+import alertService from '../services/alert.service';
+import imageCacheHoc from 'react-native-image-cache-hoc';
+const CacheableImage = imageCacheHoc(Image, {
+  validProtocols: ['http', 'https']
+});
 const { width } = Dimensions.get('window');
 const config = new Config();
 
@@ -41,11 +45,7 @@ export default class Search extends Component {
         console.log("value===+++++++++++++++++++++===========================>", global.curruntUserData.data._id);
       }
     } catch (error) {
-      if (Platform.OS === 'ios') {
-        alert('User Data Not Found')
-      } else {
-        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-      }
+      alertService.alerAndToast("User Data Not Found");
       console.log("err=====>", err)
     }
     this.getFriends()
@@ -66,12 +66,7 @@ export default class Search extends Component {
       })
       .catch(err => {
         console.log('er=====>', err);
-        // alert('Internal Server Error')
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
@@ -93,7 +88,7 @@ export default class Search extends Component {
             // console.log('response of serach tag=================>', response);
             if (!response.data.data.length) {
               console.log("=======user not found==============");
-              ToastAndroid.show('There are No HashTag Found', ToastAndroid.SHORT);
+              alertService.alerAndToast("There are No HashTag Found");
             } else {
               for (let i = 0; i < response.data.data.length; i++) {
                 for (let j = 0; j < response.data.data[i].like.length; j++) {
@@ -112,12 +107,7 @@ export default class Search extends Component {
           })
           .catch(err => {
             console.log("err======>", err);
-            // alert('Internal Server Error')
-            if (Platform.OS === 'ios') {
-              alert('Internal Server Error')
-            } else {
-              ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-            }
+            alertService.alerAndToast("Internal Server Error");
           })
       } else {
         const payload = {
@@ -128,7 +118,7 @@ export default class Search extends Component {
             // console.log('serchedUser==============================>', response.data.data);
             if (!response.data.data.length) {
               console.log("=======user not found==============");
-              ToastAndroid.show('There Are No User Found', ToastAndroid.SHORT);
+              alertService.alerAndToast("There Are No User Found");
             } else {
               let myFriends = global.curruntUserData.data.friends;
               let searchUserId = response.data.data[0]._id
@@ -142,12 +132,8 @@ export default class Search extends Component {
               console.log('resultttttttttttttttttttttt====================================>', result);
               const searchUsers = differenceBy(response.data.data, result, '_id');
               console.log('===================myDifferences======================>', searchUsers);
-              if(!searchUsers.length){
-                if (Platform.OS === 'ios') {
-                  alert('No user Found')
-                } else {
-                  ToastAndroid.show('No user Found', ToastAndroid.SHORT);
-                }
+              if (!searchUsers.length) {
+                alertService.alerAndToast("No user Found");
               }
               if (this.state.searchedPost.length != 0) {
                 this.setState({ searchedPost: [] })
@@ -160,12 +146,7 @@ export default class Search extends Component {
           })
           .catch(err => {
             console.log("err======>", err);
-            // alert('Internal Server Error')
-            if (Platform.OS === 'ios') {
-              alert('Internal Server Error')
-            } else {
-              ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-            }
+            alertService.alerAndToast("Internal Server Error");
           })
       }
     }
@@ -184,32 +165,18 @@ export default class Search extends Component {
     console.log(payload)
     if (payload.requestedUser == payload.userTobeFollowed) {
       console.log("user can't follow itself")
-      // alert("user can't follow itself")
-      if (Platform.OS === 'ios') {
-        alert("User Can't follow itself")
-      } else {
-        ToastAndroid.show("User Can't follow itself", ToastAndroid.SHORT);
-      }
+      alertService.alerAndToast("User Can't follow itself");
     } else {
       userService.handleClickFollow(payload)
         .then(response => {
           console.log("response========================>    ", response.data);
           console.log("follow sucessfully................");
           res = item;
-          if (Platform.OS === 'ios') {
-            alert("Follow successfully....")
-          } else {
-            ToastAndroid.show('Follow successfully....', ToastAndroid.SHORT);
-          }
+          alertService.alerAndToast("Follow successfully....");
         })
         .catch(err => {
           console.log("err======>", err);
-          // alert('Internal Server Error')
-          if (Platform.OS === 'ios') {
-            alert("Internal Server Error")
-          } else {
-            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-          }
+          alertService.alerAndToast("Internal Server Error");
         })
     }
   }
@@ -226,7 +193,7 @@ export default class Search extends Component {
       )
     } else {
       return (
-        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + item.userId.profilePhoto }} />
+        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + item.userId.profilePhoto }} permanent={true} />
       )
     }
   }
@@ -236,6 +203,7 @@ export default class Search extends Component {
    */
   savePostImage = (data) => {
     console.log("=====================", data);
+    alertService.alerAndToast("Internal Server Error");
     ToastAndroid.show('Downloading...', ToastAndroid.SHORT);
     this.setState(
       {
@@ -271,7 +239,7 @@ export default class Search extends Component {
         })
         .then((res) => {
           console.log('The file saved to ', res);
-          ToastAndroid.show('Download completed', ToastAndroid.SHORT);
+          alertService.alerAndToast("Download completed");
         })
     })
     setTimeout(() => {
@@ -298,7 +266,7 @@ export default class Search extends Component {
       )
     } else {
       return (
-        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + comment.userId.profilePhoto }} />
+        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + comment.userId.profilePhoto }} permanent={true} />
       )
     }
   }
@@ -424,13 +392,7 @@ export default class Search extends Component {
           })
       })
       .catch(err => {
-        // console.log("err======>", err);
-        // alert('Internal Server Error')
-        if (Platform.OS === 'ios') {
-          alert("Internal Server Error")
-        } else {
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
@@ -444,12 +406,7 @@ export default class Search extends Component {
       ButtonStateHolder: true
     })
     if (!this.state.comment) {
-      // alert("Enter Any Comment");
-      if (Platform.OS === 'ios') {
-        alert("Enter any comment")
-      } else {
-        ToastAndroid.show('Enter any comment', ToastAndroid.SHORT);
-      }
+      alertService.alerAndToast("Enter any comment");
       this.setState({
         ButtonStateHolder: false
       })
@@ -476,12 +433,7 @@ export default class Search extends Component {
         })
         .catch(err => {
           console.log("err======>", err);
-          // alert('Internal Server Error')
-          if (Platform.OS === 'ios') {
-            alert("Internal Server Error")
-          } else {
-            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-          }
+          alertService.alerAndToast("Internal Server Error");
         })
     }
   }
@@ -504,6 +456,7 @@ export default class Search extends Component {
     console.log("comment{{}}====================>", this.state.comment);
     return (
       <>
+        {/* Search bar */}
         <View style={{ flexDirection: 'row', marginTop: 10 }}>
           <View style={{ flex: 10 }}>
             <TextInput
@@ -530,6 +483,7 @@ export default class Search extends Component {
               renderItem={({ item }) =>
                 <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                   <Text style={styles.name_text}>{item.userName}</Text>
+                  <Text>{item.isFollow}</Text>
                   <TouchableOpacity
                     style={styles.button2}
                     onPress={() => this.handleClickFollow(item)}>
@@ -547,6 +501,7 @@ export default class Search extends Component {
               <View>
                 <View style={{ flexDirection: 'column' }}>
                   <View style={{ flexDirection: 'row' }}>
+                    {/* Display user profilepic And userNAme */}
                     <View style={{ flex: 10 }}>
                       <View style={{ flexDirection: 'row' }}>
                         <View>
@@ -561,6 +516,7 @@ export default class Search extends Component {
                         </View>
                       </View>
                     </View>
+                    {/* Image Download Icon */}
                     <View style={{ flex: 1 }}>
                       <Icon onPress={() => { this.savePostImage(item.images) }}
                         name="file-download"
@@ -569,13 +525,14 @@ export default class Search extends Component {
                         disabled={this.state.ButtonStateHolder}
                         style={{ marginTop: 13 }}
                       />
-                      <Toast visible={this.state.visible} message="Downloading..." />
                     </View>
                   </View>
-                  <Image resizeMode='cover' style={styles.post_img} source={{ uri: config.getMediaUrl() + item.images }} />
+                  {/* Display post Image */}
+                  <CacheableImage resizeMode='cover' style={styles.post_img} source={{ uri: config.getMediaUrl() + item.images }} permanent={true} />
                 </View>
               </View>
               <View style={{ flexDirection: 'column' }}>
+                {/* Display Like Icon And Counts */}
                 <View style={{ flexDirection: 'row', marginTop: 10 }}>
                   <View>
                     {item.isLiked ? (<Icon name="favorite"
@@ -592,6 +549,7 @@ export default class Search extends Component {
                 </View>
               </View>
               <View style={{ marginBottom: 10 }}>
+                {/* Post caption  */}
                 <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                   <TouchableOpacity
                     onPress={() => this.props.navigation.navigate('UserProfile', { userId: item.userId })}
@@ -610,6 +568,7 @@ export default class Search extends Component {
                     {item.content}
                   </ParsedText>
                 </View>
+                {/* Comment Input box */}
                 <View style={{ marginBottom: 10, flexDirection: 'row' }}>
                   <View style={{ flex: 10 }}>
                     <TextInput
@@ -631,11 +590,9 @@ export default class Search extends Component {
                     </TouchableOpacity>
                   </View>
                 </View>
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('SinglePost', { id: item._id })}
-                >
-                </TouchableOpacity>
+                {/* Display comment count */}
                 {this.displayCommentCount(item)}
+                {/* Display comment list */}
                 {this.displayComment(item)}
               </View>
             </View>

@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Tue Jul 16 17:16:12 IST 2019
+#Tue Jul 16 18:31:03 IST 2019
 56.path=lib/armeabi-v7a/libreactnativejni.so
 5.base=/var/www/html/photsharing_ios/client/android/app/build/intermediates/transforms/mergeJniLibs/release/0
 42.base=/var/www/html/photsharing_ios/client/android/app/build/intermediates/transforms/mergeJniLibs/release/0

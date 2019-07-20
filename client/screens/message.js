@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import {Platform, StyleSheet, Text, View, AsyncStorage, TouchableOpacity, ScrollView, Image } from 'react-native';
 import Config from '../config';
-import userService from '../services/user.service'
+import userService from '../services/user.service';
+import alertService from '../services/alert.service';
+import imageCacheHoc from 'react-native-image-cache-hoc';
+const CacheableImage = imageCacheHoc(Image, {
+  validProtocols: ['http', 'https']
+});
 let config = new Config();
 
 export default class Message extends Component {
@@ -22,11 +27,7 @@ export default class Message extends Component {
         global.curruntUserId = userId.data._id
       }
     } catch (error) {
-      if (Platform.OS === 'ios') {
-        alert('User Data Not Found')
-      } else {
-        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-      }
+      alertService.alerAndToast("User Data Not Found");
     }
     this.sharedPostUser();
   }
@@ -42,12 +43,7 @@ export default class Message extends Component {
         })
       })
       .catch(err => {
-        // alert('Internal Server Error');
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
         console.log(err);
       })
   }
@@ -58,11 +54,11 @@ export default class Message extends Component {
       return (
         <Image resizeMode='cover' style={styles.profile}
           source={require('../images/profile.png')}
-        />
+         />
       )
     } else {
       return (
-        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + profilePhoto }} />
+        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + profilePhoto }}   permanent = {true} />
       )
     }
   }
@@ -77,6 +73,7 @@ export default class Message extends Component {
     } else {
       return (
         <View style={styles.container}>
+          {/* Display user Name whose Shared post with this user */}
           <ScrollView>
             {this.state.sharedPost.map((item) =>
               <View>

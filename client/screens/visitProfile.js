@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
-import {Platform, StyleSheet, Text, View, TouchableOpacity, Dimensions, ScrollView, Image, ToastAndroid, ActivityIndicator, FlatList } from 'react-native';
+import { Platform, StyleSheet, Text, View, TouchableOpacity, Dimensions, ScrollView, Image, ToastAndroid, ActivityIndicator, FlatList } from 'react-native';
 import Config from '../config';
 import postService from '../services/post.service';
+import alertService from '../services/alert.service';
+import imageCacheHoc from 'react-native-image-cache-hoc';
+const CacheableImage = imageCacheHoc(Image, {
+  validProtocols: ['http', 'https']
+});
 const config = new Config();
 let sorted_posts;
 const { width } = Dimensions.get('screen');
@@ -45,12 +50,7 @@ export default class UserProfile extends Component {
       })
       .catch(err => {
         console.log('er=====>', err);
-        // alert('Internal Server Error')
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
 
   }
@@ -60,7 +60,7 @@ export default class UserProfile extends Component {
    * Get ProfilePhoto 
    */
   profilePic = () => {
-    console.log("profile pic===========================>",global.user.profilePhoto);
+    console.log("profile pic===========================>", global.user.profilePhoto);
     if (!global.user.profilePhoto) {
       return (
         <Image resizeMode='cover' style={styles.profile}
@@ -69,7 +69,7 @@ export default class UserProfile extends Component {
       )
     } else {
       return (
-        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + this.state.post.profilePhoto }} />
+        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + this.state.post.profilePhoto }} permanent={true}/>
       )
     }
   }
@@ -84,6 +84,7 @@ export default class UserProfile extends Component {
       if (!postArr) {
         return (
           <>
+            {/* loader */}
             <View style={[styles.horizontal, { flex: 1, justifyContent: 'center', alignItems: 'center' }]}>
               <ActivityIndicator size="large" color="#ef6858" />
             </View>
@@ -93,6 +94,7 @@ export default class UserProfile extends Component {
         return (
           <>
             <View style={{ backgroundColor: '#ffffff98', paddingBottom: 20 }}>
+              {/* Display profilepic and userName */}
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ flex: 5 }}></View>
                 <View style={{ flex: 6 }}>
@@ -102,6 +104,7 @@ export default class UserProfile extends Component {
               </View>
               <Text style={{ fontWeight: 'bold', marginTop: 5, fontSize: 22, textAlign: 'center', color: 'black' }}>{this.state.post.userName}</Text>
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                {/* Display post,following,followers count */}
                 <View style={styles.footer}>
                   {this.state.post.post.length ? <Text style={styles.textColor}>{this.state.post.post.length}</Text> : <Text>0</Text>}
                   <Text>Posts</Text>
@@ -116,6 +119,7 @@ export default class UserProfile extends Component {
                 </View>
               </View>
             </View>
+            {/* Display post */}
             <ScrollView>
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ flexDirection: 'row', margin: 5 }}>
@@ -123,7 +127,7 @@ export default class UserProfile extends Component {
                     data={sorted_posts}
                     renderItem={({ item }) =>
                       <TouchableOpacity onPress={() => this.props.navigation.navigate('SinglePost', { id: item._id })}>
-                        <Image style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
+                        <CacheableImage style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} permanent={true}/>
                       </TouchableOpacity>
                     }
                     numColumns={3}
@@ -138,6 +142,7 @@ export default class UserProfile extends Component {
       return (
         <>
           <View style={{ backgroundColor: '#ffffff98', paddingBottom: 20 }}>
+            {/* Display profilepic and userName */}
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 5 }}></View>
               <View style={{ flex: 6 }}>
@@ -147,8 +152,9 @@ export default class UserProfile extends Component {
             </View>
             <Text style={{ fontWeight: 'bold', marginTop: 5, fontSize: 22, textAlign: 'center', color: 'black' }}>{global.user.userName}</Text>
             <View style={{ flexDirection: 'row', marginTop: 20 }}>
+              {/* Display post,following,followers count */}
               <View style={styles.footer}>
-               <Text style={styles.textColor}>0</Text>
+                <Text style={styles.textColor}>0</Text>
                 <Text>Posts</Text>
               </View>
               <View style={styles.footer}>
@@ -161,6 +167,7 @@ export default class UserProfile extends Component {
               </View>
             </View>
           </View>
+          {/* There are no post */}
           <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
             <Text style={{ fontSize: 20, marginBottom: 20 }}>No Post</Text>
           </View>

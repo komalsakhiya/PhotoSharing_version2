@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
-import {Platform, StyleSheet, Text, View, TouchableOpacity, ScrollView, Image,ToastAndroid, ActivityIndicator, } from 'react-native';
+import { Platform, StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, ToastAndroid, ActivityIndicator, } from 'react-native';
 import Config from '../config';
-import postService from '../services/post.service'
+import postService from '../services/post.service';
+import alertService from '../services/alert.service';
+import imageCacheHoc from 'react-native-image-cache-hoc';
+const CacheableImage = imageCacheHoc(Image, {
+  validProtocols: ['http', 'https']
+});
 let config = new Config();
 
 export default class SharedPost extends Component {
@@ -22,19 +27,14 @@ export default class SharedPost extends Component {
     console.log('id===========>', Id)
     postService.getsharedPosts(Id).
       then(response => {
-        console.log('Shared posttt==================================>', response.data.data.postId.reverse());
+        console.log('Shared posttt==================================>', response.data.data.postId);
         this.setState(prevState => ({
           sharedPost: response.data.data
         }))
       })
       .catch(err => {
         console.log('er=====>', err);
-        // alert('Internal Server Error')
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
@@ -51,7 +51,7 @@ export default class SharedPost extends Component {
       )
     } else {
       return (
-        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + profilePhoto }} />
+        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + profilePhoto }} permanent={true} />
       )
     }
   }
@@ -66,6 +66,7 @@ export default class SharedPost extends Component {
           console.log("====================post deleted========================");
           return (
             <View style={styles.card}>
+              {/* Show Message for Deleted Post */}
               <View style={{ padding: 10 }}>
                 <Text style={{ color: 'black', fontSize: 15 }}>Post Unavailable</Text>
                 <Text style={{ flexWrap: 'wrap' }}>This Post is Unavailable because it was deleted</Text>
@@ -77,6 +78,7 @@ export default class SharedPost extends Component {
           return (
             <View style={styles.card}>
               <View style={{ flexDirection: 'row' }}>
+                {/* Display profile pic and userName */}
                 <View style={{ flex: 2 }}>
                   {this.profilePic(item.userId.profilePhoto)}
                 </View>
@@ -84,13 +86,15 @@ export default class SharedPost extends Component {
                   <Text style={styles.userName}>{item.userId.userName}</Text>
                 </View>
               </View>
+              {/* Display post Image */}
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate('SinglePost', { id: item._id })}
               >
                 <View>
-                  <Image resizeMode='contain' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
+                  <CacheableImage resizeMode='contain' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} permanent={true} />
                 </View>
               </TouchableOpacity>
+              {/* Display userName */}
               <View style={{ marginLeft: 10, padding: 10 }}>
                 <Text style={{ color: 'black', fontSize: 17, fontWeight: 'bold', }}>{item.userId.userName}</Text>
               </View>
@@ -107,13 +111,8 @@ export default class SharedPost extends Component {
     if (!posts) {
       return (
         <View style={[styles.container, styles.horizontal]}>
+          {/* loader */}
           <ActivityIndicator size="large" color="#ef6858" />
-        </View>
-      )
-    } else if (!Object.keys(posts[0])) {
-      return (
-        <View >
-          <Text>This Post was deleted</Text>
         </View>
       )
     } else {
@@ -122,6 +121,7 @@ export default class SharedPost extends Component {
           <ScrollView>
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 2 }}></View>
+              {/* Display shared posts */}
               <View style={{ flex: 6 }}>
                 {this.showPost()}
               </View>

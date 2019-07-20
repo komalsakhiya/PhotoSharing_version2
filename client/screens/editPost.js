@@ -3,7 +3,12 @@ import { Platform, StyleSheet, Text, View, TextInput, Image, TouchableOpacity, D
 import Config from '../config';
 const { width } = Dimensions.get('window');
 import _ from 'lodash';
-import postService from '../services/post.service'
+import postService from '../services/post.service';
+import alertService from '../services/alert.service';
+import imageCacheHoc from 'react-native-image-cache-hoc';
+const CacheableImage = imageCacheHoc(Image,{
+    validProtocols: ['http', 'https']
+});
 const config = new Config();
 
 export default class EditPost extends Component {
@@ -55,7 +60,7 @@ export default class EditPost extends Component {
 			ButtonStateHolder: true
 		})
 		if (!data) {
-			var payload = {
+			const payload = {
 				"content": Data,
 				"hashTag": hashTag1,
 				"postId": postId
@@ -63,17 +68,13 @@ export default class EditPost extends Component {
 			postService.editPost(payload)
 				.then(response => {
 					console.log("response=================>", response.data);
-					ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+					alertService.alertService(response.data.message)
 					console.log("edit post successfull");
 				}).then(() => { this.props.navigation.navigate('SinglePost', { id: postId }), this.setState({ ButtonStateHolder: false }); })
 				.catch(err => {
 					console.log(err);
 					this.setState({ ButtonStateHolder: false });
-					if (Platform.OS === 'ios') {
-						alert('Internal Server Error')
-					} else {
-						ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-					}
+					alertService.alerAndToast("Internal Server Error");
 				})
 		} else {
 			const payload = {
@@ -84,17 +85,13 @@ export default class EditPost extends Component {
 			postService.editPost(payload)
 				.then(response => {
 					console.log("response=================>", response.data);
-					ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
+					alertService.alerAndToast(response.data.message);
 					console.log("edit post successfull");
 				}).then(() => { this.props.navigation.navigate('SinglePost', { id: postId }), this.setState({ ButtonStateHolder: false }); })
 				.catch(err => {
 					console.log(err);
 					this.setState({ ButtonStateHolder: false });
-					if (Platform.OS === 'ios') {
-						alert('Internal Server Error')
-					} else {
-						ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-					}
+					alertService.alerAndToast("Internal Server Error");
 				})
 		}
 	}
@@ -103,6 +100,7 @@ export default class EditPost extends Component {
 		console.log("postttttttttt================>", this.state.posts)
 		return (
 			<View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+				{/* Post Details */}
 				{this.state.posts.map((item) =>
 					<View style={[styles.card, { elevation: 3 }]}>
 						<View style={{ flexDirection: 'column' }}>
@@ -114,7 +112,7 @@ export default class EditPost extends Component {
 								placeholder={item.content}
 								style={[styles.editInput, { marginLeft: 20 }]}
 							/>
-							<Image resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
+							<CacheableImage resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }}  permanent={true}/>
 						</View>
 
 						<TouchableOpacity style={{ borderWidth: 1, marginTop: 20, borderColor: this.state.ButtonStateHolder ? 'gray' : 'black', padding: 8, width: 100, marginLeft: 15, marginBottom: 15, borderRadius: 5 }}

@@ -6,8 +6,10 @@ axios.interceptors.request.use(async (config) => {
     // Do something before request is sent 
     console.log('config in interseptor======================>', config.url);
     const urlArray = config.url.split('/');
-    // console.log("urlArray==============>", urlArray);
-    if (urlArray[urlArray.length - 1] === 'login' || urlArray[urlArray.length - 1] === 'signUp') return config;
+    console.log("urlArray==============>", urlArray);
+    if (urlArray[urlArray.length - 1] === 'login' || urlArray[urlArray.length - 1] === 'signUp') {
+        return config;
+    }
     //If the header does not contain the token and the url not public, redirect to login  
     const curruntUser = await AsyncStorage.getItem('curruntUser');
     console.log('curuuntuser---------------------------->', JSON.parse(curruntUser).token);

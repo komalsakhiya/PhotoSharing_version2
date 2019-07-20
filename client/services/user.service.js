@@ -5,7 +5,7 @@ const config = new Config();
 export default {
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * Register User
      */
     signUp: (payload) => {
@@ -16,7 +16,7 @@ export default {
             .catch({ status: 500, message: 'Internal Serevr Error' });
     },
     /**
-     * @param {*} userId
+     * @param {String} userId
      * Get Followers Of CurruntUser
      */
     getFollowers: (userId) => {
@@ -28,7 +28,7 @@ export default {
     },
 
     /**
-     * @param {*} userId
+     * @param {String} userId
      * Get Friends Of CurruntUser
      */
     getFriends: (userId) => {
@@ -40,7 +40,7 @@ export default {
     },
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * Unfollow User
      */
     handleClickUnfollow: (payload) => {
@@ -52,7 +52,7 @@ export default {
     },
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * Follow User
      */
     handleClickFollow: (payload) => {
@@ -64,7 +64,7 @@ export default {
     },
 
     /**
-     * @param {*} payload
+     * @param {object} payload
      * Login User
      */
     onLogin: (payload) => {
@@ -75,7 +75,7 @@ export default {
             .catch({ status: 500, message: 'Internal Serevr Error' })
     },
     /**
-     * @param {*} userId
+     * @param {String} userId
      * get User whose Shred Post with You
      */
     sharedPostUser: (userId) => {
@@ -87,7 +87,7 @@ export default {
     },
 
     /**
-    * @param {*} payload
+    * @param {object} payload
     * Search HashTag
     */
     SearchUser: (payload) => {
@@ -99,7 +99,7 @@ export default {
     },
 
     /**
-     * @param {*} userId
+     * @param {String} userId
      * Get User By userId
      */
     getUserById: (userId) => {

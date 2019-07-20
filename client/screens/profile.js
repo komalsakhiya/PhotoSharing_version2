@@ -8,6 +8,11 @@ import RNFetchBlob from 'react-native-fetch-blob';
 import { EventRegister } from 'react-native-event-listeners';
 import userService from '../services/user.service';
 import postService from '../services/post.service';
+import alertService from '../services/alert.service';
+import imageCacheHoc from 'react-native-image-cache-hoc';
+const CacheableImage = imageCacheHoc(Image, {
+  validProtocols: ['http', 'https']
+});
 const { width } = Dimensions.get('screen');
 const config = new Config();
 let sorted_posts;
@@ -44,11 +49,7 @@ export default class Profile extends Component {
         // console.log("value===+++++++++++++++++++++===========================>", userId.data._id,token);
       }
     } catch (error) {
-      if (Platform.OS === 'ios') {
-        alert('User Data Not Found')
-      } else {
-        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-      }
+      alertService.alerAndToast("User Data Not Found");
       console.log("err=====>", error)
     }
     this.getUserById();
@@ -70,12 +71,7 @@ export default class Profile extends Component {
       })
       .catch(err => {
         console.log('er=====>', err);
-        // alert('Internal Server Error')
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
@@ -93,8 +89,7 @@ export default class Profile extends Component {
             return new Date(a.created_date).getTime() -
               new Date(b.created_date).getTime()
           }).reverse();
-          console.log('sorted post==================================>', sorted_posts);
-
+          // console.log('sorted post==================================>', sorted_posts);
           this.setState({
             userPost: response.data.data[0]
           })
@@ -102,12 +97,7 @@ export default class Profile extends Component {
       })
       .catch(err => {
         console.log('er=====>', err);
-        // alert('Internal Server Error')
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
@@ -173,17 +163,13 @@ export default class Profile extends Component {
           console.log("=================response============>", JSON.parse(res.data));
           if (JSON.parse(res.data).message == 'Try other username.....') {
             console.log("]]]]]]]]]]]]]]]]]]]]]]]");
-            if (Platform.OS === 'ios') {
-              alert('Try other userName...')
-            } else {
-              ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
-            }
+            alertService.alerAndToast("Try other userName...");
           } else {
             console.log("in else==========>")
             EventRegister.emit('resp', JSON.parse(res.data));
           }
           this.setState({
-            ButtonStateHolder: false
+            ButtonStateHolder: false, file: '', imageName: ''
           })
         })
         .catch((err) => {
@@ -210,19 +196,15 @@ export default class Profile extends Component {
           ]).then(async (res) => {
             console.log('response====================>', res.data);
             console.log("=================response============>", JSON.parse(res.data));
-            if (JSON.parse(res.data).message == 'Try other username.....') {
+            if (JSON.parse(res.data).message == 'Try other username...') {
               console.log("]]]]]]]]]]]]]]]]]]]]]]]");
-              if (Platform.OS === 'ios') {
-                alert('Try other username...')
-              } else {
-                ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
-              }
+              alertService.alerAndToast("Try other username...");
             } else {
               console.log("in else==========>")
               EventRegister.emit('resp', JSON.parse(res.data));
             }
             this.setState({
-              ButtonStateHolder: false
+              ButtonStateHolder: false, file: '', imageName: ''
             })
           })
           .catch((err) => {
@@ -251,17 +233,13 @@ export default class Profile extends Component {
             console.log("=================response============>", JSON.parse(res.data));
             if (JSON.parse(res.data).message == 'Try other username.....') {
               console.log("]]]]]]]]]]]]]]]]]]]]]]]");
-              if (Platform.OS === 'ios') {
-                alert('Try other username...')
-              } else {
-                ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
-              }
+              alertService.alerAndToast("Try other username...");
             } else {
               console.log("in else==========>")
               EventRegister.emit('resp', JSON.parse(res.data));
             }
             this.setState({
-              ButtonStateHolder: false
+              ButtonStateHolder: false, file: '', imageName: ''
             })
           })
           .catch((err) => {
@@ -295,23 +273,19 @@ export default class Profile extends Component {
           if (JSON.parse(res.data).message == 'Try other username.....') {
             console.log("=================response============>", JSON.parse(res.data));
             console.log("]]]]]]]]]]]]]]]]]]]]]]]");
-            if (Platform.OS === 'ios') {
-              alert('Try other username....')
-            } else {
-              ToastAndroid.show('Try other username.....', ToastAndroid.SHORT);
-            }
+            alertService.alerAndToast("Try other username...");
           } else {
             console.log("in else==========>")
             EventRegister.emit('resp', JSON.parse(res.data));
           }
           this.setState({
-            ButtonStateHolder: false
+            ButtonStateHolder: false, file: '', imageName: ''
           })
         })
         .catch((err) => {
           console.log(err);
           this.setState({
-            ButtonStateHolder: false
+            ButtonStateHolder: false, file: '', imageName: ''
           })
         })
     }
@@ -345,6 +319,7 @@ export default class Profile extends Component {
         console.log("source=============================>", source);
         this.setState({ file: response.uri, imageName: response.fileName });
       }
+      console.log('this.state.file=================>', this.state.file)
     })
   };
 
@@ -352,7 +327,7 @@ export default class Profile extends Component {
    * Get ProfilePhoto
    */
   profilePic = () => {
-    console.log("profile pic===========================>", this.state.curruntUserData.profilePhoto);
+    console.log("profile pic===========================>", this.state.curruntUserData.profilePhoto, config.getMediaUrl(), this.state.curruntUserData.profilePhoto);
     if (!this.state.curruntUserData.profilePhoto) {
       return (
         <Image resizeMode='cover' style={styles.profile}
@@ -376,100 +351,137 @@ export default class Profile extends Component {
     console.log("===============userName============", this.state.userName);
   }
 
+  /**
+   * Edit Profile Modal
+   */
+  editProfileModal = () => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={this.state.isVisible}
+        onRequestClose={() => {
+          this.setState({ isVisible: false })
+        }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <View>
+            <View style={styles.container1}>
+              <Text style={styles.titleText}>Edit Profile</Text>
+              <View style={{ marginTop: 20 }}>
+                <TextInput
+                  value={this.state.userName}
+                  onChangeText={(userName) => this.userNameHandle(userName)}
+                  placeholder={this.state.curruntUserData.userName}
+                  style={styles.input}
+                />
+                <Text style={{ marginLeft: 12 }}>Upload Profile</Text>
+                <View style={{ flexDirection: 'row' }}>
+                  {!this.state.file ? <View style={styles.ImageIcon}>
+                    <Icon name="photo-library"
+                      size={70}
+                      onPress={this.pickImage}
+                      style={{ textAlign: 'right', marginTop: 40 }}
+                    />
+                  </View> : <View style={styles.ImageIcon}>
+                      <TouchableOpacity
+                        onPress={this.pickImage}>
+                        <Image source={{ uri: this.state.file }} style={styles.preview} />
+                      </TouchableOpacity>
+                    </View>}
+                </View>
+              </View>
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: this.state.ButtonStateHolder ? '#607D8B' : '#0099e7' }]}
+                disabled={this.state.ButtonStateHolder}
+                onPress={() => this.editProfile(this.state.userName, this.state.curruntUserData.userName, this.state.imageName)}
+              >
+                <Text style={{ textAlign: 'center', color: 'white', fontSize: 15 }}>Edit Profile</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    )
+  }
+  /**
+   * display header
+   */
+  header() {
+    return (
+      <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
+        <Text style={{ fontSize: 20, top: 10, left: 20 }}>Profile</Text>
+        <TouchableOpacity
+          style={{ position: 'absolute', right: 8, top: 10, }}
+          onPress={this.logOut}>
+          <Text style={{ fontSize: 15, color: 'black', borderWidth: 1.5, borderRadius: 10, paddingRight: 15, paddingLeft: 15, paddingTop: 5, paddingBottom: 5, borderColor: '#d6d7da' }}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+  /**
+   * @param {object} data
+   * Display Count
+   */
+
+  userDetail = (data) => {
+    console.log("data=============>", data)
+    return (
+      <>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flex: 5 }}></View>
+          {/* Display profile pic */}
+          <View style={{ flex: 6 }}>
+            {this.profilePic()}
+          </View>
+          <View style={{ flex: 5 }}></View>
+        </View>
+        <Text style={{ fontWeight: 'bold', marginTop: 5, fontSize: 22, textAlign: 'center', color: 'black' }}>{data.userName}</Text>
+        {/* Display post,following,followers count */}
+        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+          <View style={styles.footer}>
+            {data.post ? <Text style={styles.textColor}>{data.post.length}</Text> : <Text style={styles.textColor}>0</Text>}
+            <Text>Posts</Text>
+          </View>
+          <View style={styles.footer}>
+            <Text style={styles.textColor}>{data.followers.length}</Text>
+            <Text>Followers</Text>
+          </View>
+          <View style={styles.footer}>
+            <Text style={styles.textColor}>{data.friends.length}</Text>
+            <Text>Following</Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => { this.openModal() }}
+        >
+          <Text style={{ textAlign: 'center', color: 'white' }}>Edit Profile</Text>
+        </TouchableOpacity>
+      </>
+    )
+  }
+
   render() {
     // console.log("curruntUserData+++++++====================>", this.state.curruntUserData);
     // console.log("posttttttsttttttttttttttttttt====================>", this.state.userPost);
     let curruntUserArray = this.state.curruntUserData.friends;
     let curruntUserPost = this.state.userPost.friends;
-    console.log('curruntUserPost====>', curruntUserPost)
+    console.log('curruntUserPost====>', curruntUserPost);
+    console.log("file=================>", this.state.file)
     if (!curruntUserPost && curruntUserArray) {
       return (
         <>
-          <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
-            <Text style={{ fontSize: 20, top: 10, left: 20 }}>Profile</Text>
-            <TouchableOpacity
-              style={{ position: 'absolute', right: 8, top: 10, }}
-              onPress={this.logOut}>
-              <Text style={{ fontSize: 15, color: 'black', borderWidth: 1.5, borderRadius: 10, paddingRight: 15, paddingLeft: 15, paddingTop: 5, paddingBottom: 5, borderColor: '#d6d7da' }}>Logout</Text>
-            </TouchableOpacity>
-          </View>
+          {/* header */}
+          {this.header()}
           <View>
             <ScrollView>
               {/* Edit Profile Modal */}
-              <Modal
-                animationType="slide"
-                transparent={false}
-                visible={this.state.isVisible}
-                onRequestClose={() => {
-                  this.setState({ isVisible: false })
-                }}>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  <View>
-                    <View style={styles.container1}>
-                      <Text style={styles.titleText}>Edit Profile</Text>
-                      <View style={{ marginTop: 20 }}>
-                        <TextInput
-                          value={this.state.userName}
-                          onChangeText={(userName) => this.userNameHandle(userName)}
-                          placeholder={this.state.curruntUserData.userName}
-                          style={styles.input}
-                        />
-                        <Text style={{ marginLeft: 12 }}>Upload Profile</Text>
-                        <View style={{ flexDirection: 'row' }}>
-                          <View style={{ flex: 6 }}>
-                            <Icon name="photo-library"
-                              size={70}
-                              onPress={this.pickImage}
-                              style={{ textAlign: 'right', marginTop: 40 }}
-                            />
-                          </View>
-                          <View style={{ flex: 4 }}>
-                            <Image source={{ uri: this.state.file }} style={styles.preview} />
-                          </View>
-                        </View>
-                      </View>
-                      <TouchableOpacity
-                        style={[styles.button, { backgroundColor: this.state.ButtonStateHolder ? '#607D8B' : '#0099e7' }]}
-                        disabled={this.state.ButtonStateHolder}
-                        onPress={() => this.editProfile(this.state.userName, this.state.curruntUserData.userName, this.state.imageName)}
-                      >
-                        <Text style={{ textAlign: 'center', color: 'white' }}>Edit Profile</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              </Modal>
+              {this.editProfileModal()}
             </ScrollView>
           </View>
           <View style={{ backgroundColor: '#ffffff98' }}>
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ flex: 5 }}></View>
-              <View style={{ flex: 6 }}>
-                {this.profilePic()}
-              </View>
-              <View style={{ flex: 5 }}></View>
-            </View>
-            <Text style={{ fontWeight: 'bold', marginTop: 5, fontSize: 22, textAlign: 'center', color: 'black' }}>{this.state.curruntUserData.userName}</Text>
-            <View style={{ flexDirection: 'row', marginTop: 20 }}>
-              <View style={styles.footer}>
-                <Text style={styles.textColor}>0</Text>
-                <Text>Posts</Text>
-              </View>
-              <View style={styles.footer}>
-                <Text style={styles.textColor}>{this.state.curruntUserData.followers.length}</Text>
-                <Text>Followers</Text>
-              </View>
-              <View style={styles.footer}>
-                <Text style={styles.textColor}>{this.state.curruntUserData.friends.length}</Text>
-                <Text>Following</Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => { this.openModal() }}
-            >
-              <Text style={{ textAlign: 'center', color: 'white' }}>Edit Profile</Text>
-            </TouchableOpacity>
+            {/* Display User Detail */}
+            {this.userDetail(this.state.curruntUserData)}
           </View>
           <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
             <Text style={{ fontSize: 20, marginBottom: 20 }}>No Post</Text>
@@ -482,101 +494,25 @@ export default class Profile extends Component {
         <>
           <View>
             <ScrollView>
-              <Modal
-                animationType="slide"
-                transparent={false}
-                visible={this.state.isVisible}
-                onRequestClose={() => {
-                  this.setState({ isVisible: false })
-                }}>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  <View>
-                    <View style={styles.container1}>
-                      <Text style={styles.titleText}>Edit Profile</Text>
-                      <View style={{ marginTop: 20 }}>
-                        <TextInput
-                          value={this.state.userName}
-                          multiline={true}
-                          onChangeText={(userName) => this.userNameHandle(userName)}
-                          placeholder={this.state.userPost.userName}
-                          style={styles.input}
-                        />
-                        <Text style={{ marginLeft: 10 }}>Upload Profile</Text>
-                        <View style={{ flexDirection: 'row' }}>
-                          <View style={{ flex: 6 }}>
-                            <Icon name="photo-library"
-                              size={70}
-                              onPress={this.pickImage}
-                              style={{ textAlign: 'right', marginTop: 40 }}
-                            />
-                          </View>
-                          <View style={{ flex: 4 }}>
-                            <Image source={{ uri: this.state.file }} style={styles.preview} />
-                          </View>
-                        </View>
-                      </View>
-                      <TouchableOpacity
-                        style={[styles.button, { backgroundColor: this.state.ButtonStateHolder ? '#607D8B' : '#0099e7' }]}
-                        disabled={this.state.ButtonStateHolder}
-                        onPress={() => this.editProfile(this.state.userName, this.state.curruntUserData.userName, this.state.imageName)}
-                      >
-                        <Text style={{ textAlign: 'center', color: 'white', fontSize: 15 }}>Edit Profile</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              </Modal>
+              {/* Edit Profile modal */}
+              {this.editProfileModal()}
             </ScrollView>
           </View>
-          <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
-            <Text style={{ fontSize: 20, top: 10, left: 20 }}>Profile</Text>
-            <TouchableOpacity
-              style={{ position: 'absolute', right: 8, top: 10, }}
-              onPress={this.logOut}>
-              <Text style={{ fontSize: 15, color: 'black', borderWidth: 1.5, borderRadius: 10, paddingRight: 15, paddingLeft: 15, paddingTop: 5, paddingBottom: 5, borderColor: '#d6d7da' }}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-          <View>
-          </View>
+          {/* display header */}
+          {this.header()}
           <View style={{ backgroundColor: '#ffffff98' }}>
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ flex: 5 }}></View>
-              <View style={{ flex: 6 }}>
-                {this.profilePic()}
-              </View>
-              <View style={{ flex: 5 }}></View>
-            </View>
-            <Text style={{ fontWeight: 'bold', marginTop: 5, fontSize: 22, textAlign: 'center', color: 'black' }}>{this.state.curruntUserData.userName}</Text>
-            <View style={{ flexDirection: 'row', marginTop: 10 }}>
-              <View style={styles.footer}>
-                <Text style={styles.textColor}>{this.state.userPost.post.length}</Text>
-                {this.state.userPost.post.length == 1 ? <Text>Post</Text> : <Text>Posts</Text>}
-
-              </View>
-              <View style={styles.footer}>
-                <Text style={styles.textColor}>{this.state.userPost.followers.length}</Text>
-                <Text>Followers</Text>
-              </View>
-              <View style={styles.footer}>
-                <Text style={styles.textColor}>{this.state.userPost.friends.length}</Text>
-                <Text>Following</Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => { this.openModal() }}
-            >
-              <Text style={{ textAlign: 'center', color: 'white', fontSize: 15 }}>Edit Profile</Text>
-            </TouchableOpacity>
+            {/* Display User Detail */}
+            {this.userDetail(this.state.userPost)}
           </View>
           <ScrollView>
+            {/* Display post */}
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flexDirection: 'row', margin: 5 }}>
                 <FlatList
                   data={sorted_posts}
                   renderItem={({ item }) =>
                     <TouchableOpacity style={styles.GridViewContainer} onPress={() => this.props.navigation.navigate('SinglePost', { id: item._id })}>
-                      <Image style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
+                      <CacheableImage style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} permanent={true} />
                     </TouchableOpacity>
                   }
                   numColumns={3}
@@ -589,14 +525,8 @@ export default class Profile extends Component {
     } else {
       return (
         <>
-          <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
-            <Text style={{ fontSize: 20, top: 10, left: 20 }}>Profile</Text>
-            <TouchableOpacity
-              style={{ position: 'absolute', right: 8, top: 10, }}
-              onPress={this.logOut}>
-              <Text style={{ fontSize: 15, color: 'black', borderWidth: 1.5, borderRadius: 10, paddingRight: 15, paddingLeft: 15, paddingTop: 5, paddingBottom: 5, borderColor: '#d6d7da' }}>Logout</Text>
-            </TouchableOpacity>
-          </View>
+          {this.header()}
+          {/* loader */}
           <View style={{ justifyContent: 'center', alignItem: 'center', flex: 1 }}>
             <View style={styles.horizontal}>
               <ActivityIndicator size="large" color="#ef6858" />
@@ -674,5 +604,9 @@ const styles = StyleSheet.create({
     borderColor: 'lightgray',
     borderWidth: 2,
     margin: 'auto'
+  },
+  ImageIcon: {
+    marginLeft: 'auto',
+    marginRight: 'auto'
   }
 });

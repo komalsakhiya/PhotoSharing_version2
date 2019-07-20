@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, ToastAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import userService from '../services/user.service'
+import userService from '../services/user.service';
+import alertService from '../services/alert.service';
 
 export default class SignUp extends Component {
   constructor(props) {
@@ -26,21 +27,13 @@ export default class SignUp extends Component {
     })
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (!this.state.name || !this.state.email || !this.state.userName || !this.state.password) {
-      if (Platform.OS === 'ios') {
-        alert('Enter Valid Value')
-      } else {
-        ToastAndroid.show('Enter Valid Value', ToastAndroid.SHORT);
-      }
+      alertService.alerAndToast("Enter Valid Value");
       this.setState({
         ButtonStateHolder: false
       })
     } else if (!reg.test(this.state.email)) {
       console.log("Email is Not Correct");
-      if (Platform.OS === 'ios') {
-        alert('Enter Valid Email')
-      } else {
-        ToastAndroid.show('Enter Valid Email', ToastAndroid.SHORT);
-      }
+      alertService.alerAndToast("Enter Valid Email");
       this.setState({
         ButtonStateHolder: false
       })
@@ -56,16 +49,17 @@ export default class SignUp extends Component {
       userService.signUp(payload).
         then(function (response) {
           console.log("response===============>", response.data);
-          if (Platform.OS === 'ios') {
-            alert('Registerd successfully...')
-          } else {
-            ToastAndroid.show('Registerd successfully...', ToastAndroid.SHORT);
-          }
+          alertService.alerAndToast(response.data.message);
           console.log("register successfull");
         })
         .then(() => this.props.navigation.navigate('Login'))
         .catch(err => {
-          console.log('err=====>', err);
+          console.log('err=====>', err.response.status, err);
+          if (err.response.status == 401) {
+            alertService.alerAndToast(err.response.data.message);
+          } else {
+            alertService.alerAndToast("Internal Server Error");
+          }
         })
     }
     this.setState({
@@ -93,6 +87,7 @@ export default class SignUp extends Component {
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 1 }}>
           </View>
+          {/* Signup Form */}
           <View style={{ flex: 6 }}>
             <View style={styles.container}>
               <Text style={styles.titleText}>Photosharing</Text>

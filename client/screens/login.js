@@ -3,7 +3,7 @@ import { Platform, StyleSheet, Text, View, TextInput, TouchableOpacity, ToastAnd
 // import FBSDK, { LoginManager } from "react-native-fbsdk";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import userService from '../services/user.service'
-
+import alertService from '../services/alert.service';
 
 export default class Login extends Component {
   constructor(props) {
@@ -40,11 +40,7 @@ export default class Login extends Component {
     })
     if (!this.state.userName || !this.state.password) {
       console.log("===========requirefd-=============================");
-      if (Platform.OS === 'ios') {
-        alert('Enter username and password')
-      } else {
-        ToastAndroid.show('Enter username and password', ToastAndroid.SHORT);
-      }
+      alertService.alerAndToast("Enter username and password");
       this.setState({
         ButtonStateHolder: false
       })
@@ -60,19 +56,11 @@ export default class Login extends Component {
       userService.onLogin(payload)
         .then(async function (response) {
           console.log("response=================>", response.data);
-          if (Platform.OS === 'ios') {
-            alert(response.data.message)
-          } else {
-          ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-          }
+          alertService.alerAndToast(response.data.message);
           try {
             await AsyncStorage.setItem('curruntUser', JSON.stringify(response.data));
           } catch (error) {
-            if (Platform.OS === 'ios') {
-              alert('User Data Not Found')
-            } else {
-            ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-            }
+            alertService.alerAndToast("User Data Not Found");
           }
           const curruntUser = await AsyncStorage.getItem('curruntUser');
           console.log('curuuntuser---------------------------->', JSON.parse(curruntUser));
@@ -84,12 +72,7 @@ export default class Login extends Component {
         .catch(err => {
           console.log('err=========>', err);
           this.setState({ ButtonStateHolder: false });
-          if (Platform.OS === 'ios') {
-            alert(err.response.data.message)
-          } else {
-          ToastAndroid.show(err.response.data.message, ToastAndroid.SHORT);
-          }
-          // alert(err.response.data.message)
+          alertService.alerAndToast(err.response.data.message);
         })
     }
   }
@@ -100,6 +83,7 @@ export default class Login extends Component {
     console.log("{{{{{{{{{{{{{{{", this.state);
     return (
       <View style={styles.form}>
+        {/* Login Form */}
         <View style={{ flexDirection: 'row' }} >
           <View style={{ flex: 1 }} />
           <View style={{ flex: 6 }} >
@@ -141,7 +125,7 @@ export default class Login extends Component {
                   <Text style={{ textAlign: 'center', marginTop: 5, color: '#385185' }}>Login with Facebook</Text>
                 </TouchableOpacity>
               </View>
-
+              {/* signUp view */}
               <View style={styles.signUpView}>
                 <View style={{ flexDirection: 'row' }}>
                   <Text style={{ color: 'black', marginLeft: 20 }}>Don't have an account?</Text>

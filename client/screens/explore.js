@@ -3,6 +3,11 @@ import { Platform, StyleSheet, Text, View, FlatList, Image, TouchableOpacity, To
 import Config from '../config';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import postService from '../services/post.service';
+import alertService from '../services/alert.service';
+import imageCacheHoc from 'react-native-image-cache-hoc';
+const CacheableImage = imageCacheHoc(Image, {
+  validProtocols: ['http', 'https']
+});
 const { width } = Dimensions.get('screen');
 const config = new Config();
 
@@ -36,11 +41,7 @@ export default class Explore extends Component {
         }))
       })
       .catch(err => {
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
@@ -52,35 +53,43 @@ export default class Explore extends Component {
     this.setState(prevState => ({ page: prevState.page + 1 }), () => this.getAllPost());
   }
 
-  render() {
-    console.log("posttttttttt=============>", this.state.posts);
-    console.log("searched post=====================>", this.state.searchedPost);
+  /**
+   * Display posts Images
+   */
+  displayPostsImage = () => {
     if (!this.state.posts.length) {
       return (
-        <>
-          <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
-            <Text style={{ fontSize: 20, top: 10, left: 20 }}>Explore</Text>
-          </View>
-          <View style={{ flexDirection: 'row', marginTop: 10 }}>
-            <View style={{ flex: 10 }}>
-              <TouchableOpacity
-                style={styles.input}
-                onPress={() => this.props.navigation.navigate('Search')}>
-                <Text style={{ color: 'gray' }}>Search</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Icon name='search' color='black' size={27} style={{ marginTop: 5, opacity: 0.5, marginLeft: 5 }} />
-            </View>
-          </View>
-          <View style={[styles.horizontal, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
-            <ActivityIndicator size="large" color="#ef6858" />
-          </View>
-        </>
+        <View style={[styles.horizontal, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
+          <ActivityIndicator size="large" color="#ef6858" />
+        </View>
       )
     } else {
       return (
+        <View style={{ marginBottom: 100 }}>
+          <FlatList
+            data={this.state.posts}
+            keyExtractor={(item, index) => index}
+            onEndReachedThreshold={0.6}
+            onEndReached={() => {
+              this.handleEnd();
+            }}
+            onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
+            renderItem={({ item }) =>
+              <CacheableImage style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} permanent= {true} />
+            }
+            numColumns={2}
+          />
+        </View>
+      )
+    }
+  }
+
+  render() {
+    console.log("posttttttttt=============>", this.state.posts);
+    console.log("searched post=====================>", this.state.searchedPost);
+      return (
         <>
+        {/* Display Serach bar */}
           <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
             <Text style={{ fontSize: 20, top: 10, left: 20 }}>Explore</Text>
           </View>
@@ -96,26 +105,10 @@ export default class Explore extends Component {
               <Icon name='search' color='black' size={27} style={{ marginTop: 5, opacity: 0.5, marginLeft: 5 }} />
             </View>
           </View>
-
-          {/* Display Posts Images */}
-          <View style={{ marginBottom: 100 }}>
-            <FlatList
-              data={this.state.posts}
-              keyExtractor={(item, index) => index}
-              onEndReachedThreshold={0.6}
-              onEndReached={() => {
-                this.handleEnd();
-              }}
-              onMomentumScrollBegin={() => { this.onEndReachedCalledDuringMomentum = false; }}
-              renderItem={({ item }) =>
-                <Image style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
-              }
-              numColumns={2}
-            />
-          </View>
+          {/* Display post images */}
+          {this.displayPostsImage()}
         </>
-      );
-    }
+      )
   }
 }
 

@@ -3,6 +3,7 @@ import { Platform, StyleSheet, Text, View, FlatList, TouchableOpacity, ToastAndr
 import { AsyncStorage } from 'react-native';
 import _ from 'lodash';
 import userService from '../services/user.service';
+import alertService from '../services/alert.service';
 
 export default class Followers extends Component {
    constructor(props) {
@@ -28,11 +29,7 @@ export default class Followers extends Component {
             console.log("value===+++++++++++++++++++++===========================>", global.curruntUserData.data._id);
          }
       } catch (error) {
-         if (Platform.OS === 'ios') {
-            alert('User Data Not Found')
-         } else {
-            ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-         }
+         alertService.alerAndToast("User Data Not Found");
       }
       this.getFollowers();
    }
@@ -49,11 +46,7 @@ export default class Followers extends Component {
          })
          .catch(err => {
             console.log('er=====>', err);
-            if (Platform.OS === 'ios') {
-               alert('Internal Server Error')
-            } else {
-               ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-            }
+            alertService.alerAndToast("Internal Server Error");
          })
    }
 
@@ -68,6 +61,7 @@ export default class Followers extends Component {
       } else {
          return (
             <View style={{ backgroundColor: '#fff', paddingBottom: 10 }} >
+               {/* Display Followers Name */}
                <FlatList
                   data={this.state.followers}
                   renderItem={({ item }) =>

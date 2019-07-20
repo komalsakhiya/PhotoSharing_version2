@@ -3,6 +3,7 @@ import { Platform, StyleSheet, Text, View, FlatList, TouchableOpacity, ScrollVie
 import { AsyncStorage } from 'react-native';
 import _ from 'lodash';
 import userService from '../services/user.service';
+import alertService from '../services/alert.service';
 
 export default class Following extends Component {
    constructor(props) {
@@ -30,11 +31,7 @@ export default class Following extends Component {
             console.log("value===+===========================>", global.curruntUserData.data._id);
          }
       } catch (error) {
-         if (Platform.OS === 'ios') {
-            alert('User Data Not Found')
-         } else {
-            ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-         }
+         alertService.alerAndToast("User Data Not Found");
       }
       this.getFriends();
    }
@@ -51,12 +48,7 @@ export default class Following extends Component {
          })
          .catch(err => {
             console.log('er=====>', err);
-            if (Platform.OS === 'ios') {
-               alert('Internal Server Error')
-            } else {
-               ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-            }
-            // alert('Internal Server Error')
+            alertService.alerAndToast("Internal Server Error");
          })
    }
 
@@ -73,12 +65,7 @@ export default class Following extends Component {
       console.log(payload)
       if (payload.requestedUser == payload.userTobeUnFollowed) {
          console.log("user can't Unfollow itself")
-         // alert("user can't Unfollow itself")
-         if (Platform.OS === 'ios') {
-            alert('Internal Server Error')
-         } else {
-            ToastAndroid.show("user can't Unfollow itself", ToastAndroid.SHORT);
-         }
+         alertService.alerAndToast("user can't Unfollow itself");
       } else {
          userService.handleClickUnfollow(payload)
             .then(response => {
@@ -90,12 +77,7 @@ export default class Following extends Component {
             .catch(err => {
                console.log(err);
                this.setState({ ButtonStateHolder: false });
-               if (Platform.OS === 'ios') {
-                  alert('Internal Server Error')
-               } else {
-                  ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-               }
-               // alert('Internal Server Error')
+               alertService.alerAndToast("Internal Server Error");
             })
       }
    }
@@ -113,6 +95,7 @@ export default class Following extends Component {
             <View style={{ backgroundColor: '#fff' }}>
                <ScrollView>
                   <View style={{ marginBottom: 20 }}>
+                     {/*  Display Friends Name And unfollow Button */}
                      <FlatList
                         data={this.state.friends}
                         renderItem={({ item }) =>

@@ -5,6 +5,7 @@ import { AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
+import alertService from '../services/alert.service'
 import _ from 'lodash'
 
 const config = new Config();
@@ -69,11 +70,7 @@ export default class Addpost extends Component {
 		console.log('hashTag===============>', typeof hashTag);
 		console.log("this.state.buttonstateholder=================>", this.state.ButtonStateHolder);
 		if (!this.state.imageName) {
-			if (Platform.OS === 'ios') {
-				alert('Choose Image')
-			} else {
-				ToastAndroid.show('Choose Image', ToastAndroid.SHORT);
-			}
+			alertService.alerAndToast("Choose Image");
 		} else {
 			try {
 				const curruntUser = await AsyncStorage.getItem('curruntUser');
@@ -83,11 +80,7 @@ export default class Addpost extends Component {
 				}
 			} catch (error) {
 				console.log("==============", error);
-				if (Platform.OS === 'ios') {
-					alert('User Data Not Found')
-				} else {
-					ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-				}
+				alertService.alerAndToast("User Data Not Found");
 			};
 			const cleanFilePath = this.state.file.replace('file://', '');
 			RNFetchBlob.fetch('POST', config.getBaseUrl() + 'post/post', {
@@ -123,18 +116,14 @@ export default class Addpost extends Component {
 						await AsyncStorage.setItem('curruntUser', '');
 						this.props.navigation.navigate('Login')
 					} else {
-						if (Platform.OS === 'ios') {
-							alert('User Data Not Found')
-						} else {
-							ToastAndroid.show(JSON.parse(res.data).message, ToastAndroid.SHORT);
-						}
-						this.props.navigation.navigate('Profile')
+						alertService.alerAndToast("Post Added Successfully...")
+						this.props.navigation.navigate('Post')
 					}
 
 				})
 				.catch((err) => {
 					console.log('err===========================>', err);
-					ToastAndroid.show("Internal Server Error", ToastAndroid.SHORT);
+					alertService.alerAndToast("Internal Server Error")
 					this.setState({ content: '', file: "", ButtonStateHolder: false, imageName: '' })
 				})
 		}
@@ -142,69 +131,40 @@ export default class Addpost extends Component {
 
 	render() {
 		console.log('this.state========================>', this.state);
-		if (this.state.file) {
-			return (
-				<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-					<View style={[styles.container, { marginTop: 70 }]}>
-						<Text style={styles.titleText}>Add Post</Text>
-						<Icon name="photo-library"
+		return (
+			<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+				{/* Add post Form */}
+				<View style={[styles.container, { marginTop: 70 }]}>
+					<Text style={styles.titleText}>Add Post</Text>
+					<View style={{ flexDirection: 'row' }}>
+						{!this.state.file ? <Icon name="photo-library"
 							size={70}
 							onPress={this.pickImage}
-							style={{ textAlign: 'center', marginTop: 40 }}
-						/>
-						<TextInput
-							value={this.state.content}
-							onChangeText={(content) => this.setState({ content: content })}
-							placeholder={'Caption'}
-							style={styles.input}
-						/>
-						<View style={{ flexDirection: 'row' }}>
-							<View style={{ flex: 3 }}>
-							</View>
-							<View style={{ flex: 4 }}>
-								<Image source={{ uri: this.state.file }} style={styles.preview} />
-							</View>
-							<View style={{ flex: 3 }}>
-							</View>
-						</View>
-
-						<TouchableOpacity
-							style={[styles.button, { backgroundColor: this.state.ButtonStateHolder ? '#607D8B' : '#0099e7' }]}
-							onPress={() => this.addPost(this.state)}
-							disabled={this.state.ButtonStateHolder}>
-							<Text style={{ textAlign: 'center', marginTop: 5, color: 'white' }}> Post</Text>
-						</TouchableOpacity>
-
+							style={styles.ImageIcon}
+						/> : <View style={styles.ImageIcon}>
+								<TouchableOpacity
+									onPress={this.pickImage}
+								>
+									<Image source={{ uri: this.state.file }} style={styles.preview} />
+								</TouchableOpacity>
+							</View>}
 					</View>
-				</View>
-			)
-		} else {
-			return (
-				<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-					<View style={styles.container}>
-						<Text style={styles.titleText}>Add Post</Text>
-						<Icon name="photo-library"
-							size={70}
-							onPress={this.pickImage}
-							style={{ textAlign: 'center', marginTop: 40 }}
-						/>
-						<TextInput
-							value={this.state.content}
-							onChangeText={(content) => this.setState({ content: content })}
-							placeholder={'Caption'}
-							style={styles.input}
-						/>
+					<TextInput
+						value={this.state.content}
+						onChangeText={(content) => this.setState({ content: content })}
+						placeholder={'Caption'}
+						style={styles.input}
+					/>
+					<TouchableOpacity
+						style={[styles.button, { backgroundColor: this.state.ButtonStateHolder ? '#607D8B' : '#0099e7' }]}
+						onPress={() => this.addPost(this.state)}
+						disabled={this.state.ButtonStateHolder}>
+						<Text style={{ textAlign: 'center', marginTop: 5, color: 'white' }}> Post</Text>
+					</TouchableOpacity>
 
-						<TouchableOpacity
-							style={[styles.button]}
-							onPress={() => this.addPost(this.state)}
-						>
-							<Text style={{ textAlign: 'center', marginTop: 5, color: 'white' }}> Post</Text>
-						</TouchableOpacity>
-					</View>
 				</View>
-			);
-		}
+			</View>
+		)
 	}
 }
 const styles = StyleSheet.create({
@@ -246,6 +206,12 @@ const styles = StyleSheet.create({
 		width: 120,
 		borderRadius: 3,
 		marginTop: 5
+	},
+	ImageIcon: {
+		textAlign: 'center',
+		marginTop: 40,
+		marginLeft: 'auto',
+		marginRight: 'auto'
 	}
 });
 

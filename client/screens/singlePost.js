@@ -7,6 +7,11 @@ import { EventRegister } from 'react-native-event-listeners';
 import ParsedText from 'react-native-parsed-text';
 import _ from 'lodash';
 import postService from '../services/post.service';
+import alertService from '../services/alert.service';
+import imageCacheHoc from 'react-native-image-cache-hoc';
+const CacheableImage = imageCacheHoc(Image, {
+  validProtocols: ['http', 'https']
+});
 let { width } = Dimensions.get('window');
 let config = new Config();
 
@@ -43,12 +48,8 @@ export default class SinglePost extends Component {
         console.log("value===+++++++++++++++++++++===========================>", global.curruntUserData.data._id);
       }
     } catch (error) {
-      if (Platform.OS === 'ios') {
-        alert('User Data Not Found')
-      } else {
-        ToastAndroid.show('User Data Not Found', ToastAndroid.SHORT);
-      }
-      console.log("err===>", err)
+      alertService.alerAndToast("User Data Not Found");
+      console.log("err===>", error)
     }
   }
 
@@ -89,12 +90,7 @@ export default class SinglePost extends Component {
       })
       .catch(err => {
         console.log('errrr in single post=================>', err);
-        // alert('Internal Server Error')
-        if (Platform.OS === 'ios') {
-          alert('Internal Server Error')
-        } else {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast("Internal Server Error");
       })
   }
 
@@ -120,6 +116,9 @@ export default class SinglePost extends Component {
       .then(() => {
         this.getPost();
       })
+      .catch(err => {
+        alertService.alerAndToast("Internal Server Error");
+      })
   }
 
   /**
@@ -129,11 +128,7 @@ export default class SinglePost extends Component {
   comment = async (postId) => {
     console.log('data=============================>', postId);
     if (!this.state.comment) {
-      if (Platform.OS === 'ios') {
-        alert('Enter any comment')
-      } else {
-      ToastAndroid.show('Enter any comment', ToastAndroid.SHORT);
-      }
+      alertService.alerAndToast('Enter any comment');
     } else {
       console.log('userId======================>', global.curruntUserData.data._id);
       console.log('postId============================>', postId);
@@ -149,6 +144,9 @@ export default class SinglePost extends Component {
         })
         .then(() => {
           this.getPost();
+        })
+        .catch(err => {
+          alertService.alerAndToast("Internal Server Error");
         })
     }
   }
@@ -166,22 +164,12 @@ export default class SinglePost extends Component {
     postService.deletePost(payload).
       then(response => {
         console.log("response===============s==>", response.data);
-        if (Platform.OS === 'ios') {
-          alert(response.data.message)
-        } else {
-        ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast(response.data.message);
       })
       .then(() => this.props.navigation.navigate('Profile'))
       .catch(err => {
-        // console.log("errrrr============>",err)
         console.log('er=====>', err.response.data.message);
-        // alert('Internal Server Error')
-        if (Platform.OS === 'ios') {
-          alert(err.response.data.message)
-        } else {
-        ToastAndroid.show(err.response.data.message, ToastAndroid.SHORT);
-        }
+        alertService.alerAndToast(err.response.data.message);
       })
   }
 
@@ -206,7 +194,7 @@ export default class SinglePost extends Component {
       )
     } else {
       return (
-        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + item.userId.profilePhoto }} />
+        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + item.userId.profilePhoto }} permanent={true}/>
       )
     }
   }
@@ -331,6 +319,7 @@ export default class SinglePost extends Component {
                 <View>
                   <View style={{ flexDirection: 'column' }}>
                     <View style={{ flexDirection: 'row' }}>
+                      {/* Display profile pic and userName */}
                       <View style={{ flex: 10 }}>
                         <View style={{ flexDirection: 'row' }}>
                           <View>
@@ -344,6 +333,7 @@ export default class SinglePost extends Component {
                       <View style={{ flex: 1 }}>
                         {this.editPostIcon(item.userId._id)}
                       </View>
+                      {/* open popover for edit and delte post */}
                       <Popover
                         isVisible={this.state.isVisible}
                         popoverStyle={{ height: 70, width: 100 }}
@@ -367,9 +357,11 @@ export default class SinglePost extends Component {
                         </View>
                       </Popover>
                     </View>
-                    <Image resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} />
+                    {/* Display post image */}
+                    <CacheableImage resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} permanent={true} />
                   </View>
                 </View>
+                {/* Display like icon and count */}
                 <View style={{ flexDirection: 'row', marginTop: 10, marginBottom: 10 }}>
                   <View>
                     {item.isLiked ? (<Icon name="favorite"
@@ -386,6 +378,7 @@ export default class SinglePost extends Component {
                     {item.like.length ? ((item.like.length == 1 ? (<Text style={styles.likeText}>{item.like.length} like</Text>) : (<Text style={styles.likeText}>{item.like.length} likes</Text>))) : (null)}
                   </View>
                 </View>
+                {/* Comment Input Box */}
                 <View style={{ marginBottom: 10, flexDirection: 'row' }}>
                   <View style={{ flex: 10 }}>
                     <TextInput

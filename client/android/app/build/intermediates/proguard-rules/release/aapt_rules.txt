@@ -1,4 +1,4 @@
-# Referenced at /var/www/html/photsharing_ios/client/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:31
+# Referenced at /var/www/html/photsharing_ios/client/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:30
 -keep class android.support.v4.app.CoreComponentFactory { <init>(); }
 # Referenced at /var/www/html/photsharing_ios/client/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:55
 -keep class android.support.v4.content.FileProvider { <init>(); }
@@ -8,7 +8,7 @@
 -keep class com.imagepicker.FileProvider { <init>(); }
 # Referenced at /var/www/html/photsharing_ios/client/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:39
 -keep class com.photosharing.MainActivity { <init>(); }
-# Referenced at /var/www/html/photsharing_ios/client/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:31
+# Referenced at /var/www/html/photsharing_ios/client/android/app/build/intermediates/merged_manifests/release/AndroidManifest.xml:30
 -keep class com.photosharing.MainApplication { <init>(); }
 # Referenced at /home/rao/.gradle/caches/transforms-2/files-2.1/d2fddd96debdba976a6fb9e88e7b07c1/res/layout/abc_alert_dialog_material.xml:41
 -keep class android.support.v4.widget.NestedScrollView { <init>(android.content.Context, android.util.AttributeSet); }
