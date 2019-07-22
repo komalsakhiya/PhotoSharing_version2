@@ -115,32 +115,32 @@ export default class Search extends Component {
         }
         userService.SearchUser(payload)
           .then(response => {
-            // console.log('serchedUser==============================>', response.data.data);
+            console.log('serchedUser==============================>', response.data.data);
             if (!response.data.data.length) {
               console.log("=======user not found==============");
               alertService.alerAndToast("There Are No User Found");
             } else {
-              let myFriends = global.curruntUserData.data.friends;
-              let searchUserId = response.data.data[0]._id
-              console.log('myFriends===========>', myFriends);
-              console.log("searchUserId============>0", searchUserId);
-              console.log("this.state.friends=============>", this.state.friends)
-              let result = this.state.friends.filter(function (o1) {
-                // if match found return false
-                return _.findIndex(response.data.data, { 'id': o1.id }) !== -1 ? false : true;
-              });
-              console.log('resultttttttttttttttttttttt====================================>', result);
-              const searchUsers = differenceBy(response.data.data, result, '_id');
-              console.log('===================myDifferences======================>', searchUsers);
-              if (!searchUsers.length) {
+              // let myFriends = global.curruntUserData.data.friends;
+              // let searchUserId = response.data.data[0]._id
+              // console.log('myFriends===========>', myFriends);
+              // console.log("searchUserId============>0", searchUserId);
+              // console.log("this.state.friends=============>", this.state.friends)
+              // let result = this.state.friends.filter(function (o1) {
+              //   // if match found return false
+              //   return _.findIndex(response.data.data, { 'id': o1.id }) !== -1 ? false : true;
+              // });
+              // console.log('resultttttttttttttttttttttt====================================>', result);
+              // const searchUsers = differenceBy(response.data.data, result, '_id');
+              // console.log('===================myDifferences======================>', searchUsers);
+              if (!response.data.data.length) {
                 alertService.alerAndToast("No user Found");
               }
+              this.setState(prevState => ({
+                searchedUser: response.data.data
+              }))
               if (this.state.searchedPost.length != 0) {
                 this.setState({ searchedPost: [] })
               }
-              this.setState(prevState => ({
-                searchedUser: searchUsers
-              }))
               console.log("================resulttttttttttttt=========>", response.data);
             }
           })
@@ -193,7 +193,7 @@ export default class Search extends Component {
       )
     } else {
       return (
-        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + item.userId.profilePhoto }} permanent={true} />
+        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + item.userId.profilePhoto }} permanent={true} />
       )
     }
   }
@@ -266,7 +266,7 @@ export default class Search extends Component {
       )
     } else {
       return (
-        <CacheableImage resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + comment.userId.profilePhoto }} permanent={true} />
+        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + comment.userId.profilePhoto }} permanent={true} />
       )
     }
   }
@@ -291,7 +291,7 @@ export default class Search extends Component {
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
                     <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('UserProfile', { userId: comment.userId })}
+                      onPress={() =>comment.userId._id ==  global.curruntUserData.data._id ?this.props.navigation.navigate('Profile'): this.props.navigation.navigate('UserProfile', { userId: comment.userId ,curruntUserId: global.curruntUserData.data._id})}
                     >
                       <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                     </TouchableOpacity>
@@ -322,7 +322,7 @@ export default class Search extends Component {
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
                     <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('UserProfile', { userId: comment.userId })}
+                      onPress={() => comment.userId._id ==  global.curruntUserData.data._id ?this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', { userId: comment.userId ,curruntUserId: global.curruntUserData.data._id})}
                     >
                       <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                     </TouchableOpacity>
@@ -438,6 +438,24 @@ export default class Search extends Component {
     }
   }
 
+  /**
+   * Get ProfilePhoto 
+   */
+  profilePic = (profile) => {
+    console.log("profile pic===========================>", profile);
+    if (!profile) {
+      return (
+        <Image resizeMode='cover' style={styles.profile}
+          source={require('../images/profile.png')}
+        />
+      )
+    } else {
+      return (
+        <Image resizeMode='cover' style={styles.profile} source={{ uri: config.getMediaUrl() + profile }} permanent={true} />
+      )
+    }
+  }
+
   render() {
     const Toast = (props) => {
       if (props.visible) {
@@ -452,7 +470,7 @@ export default class Search extends Component {
       }
       return null;
     };
-    console.log("Searched Post====================>", this.state.searchedPost);
+    console.log("Searched Post====================>", this.state.searchedUser);
     console.log("comment{{}}====================>", this.state.comment);
     return (
       <>
@@ -481,14 +499,21 @@ export default class Search extends Component {
               data={this.state.searchedUser}
               style={{ elevation: 5 }}
               renderItem={({ item }) =>
-                <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-                  <Text style={styles.name_text}>{item.userName}</Text>
-                  <Text>{item.isFollow}</Text>
+                <View style={{ flexDirection: 'row' }}>
+                  <View style={{ flex: 2 }}>
+                    {this.profilePic(item.profilePhoto)}
+                  </View>
                   <TouchableOpacity
+                    style={{ flex: 8 }}
+                    onPress={() => { item._id ==global.curruntUserData.data._id?this.props.navigation.navigate('Profile'): this.props.navigation.navigate('UserProfile', { userId: item ,curruntUserId: global.curruntUserData.data._id}) }}
+                  >
+                    <Text style={styles.name_text}>{item.userName}</Text>
+                  </TouchableOpacity>
+                  {/* <TouchableOpacity
                     style={styles.button2}
                     onPress={() => this.handleClickFollow(item)}>
                     <Text style={{ textAlign: 'center', marginTop: 5, color: 'white' }}>Follow</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               }
             />
@@ -509,7 +534,7 @@ export default class Search extends Component {
                         </View>
                         <View>
                           <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate('UserProfile', { userId: item.userId })}
+                            onPress={() => item.userId._id ==  global.curruntUserData.data._id?this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', { userId: item.userId,curruntUserId: global.curruntUserData.data._id })}
                           >
                             <Text style={styles.userName}>{item.userId.userName}</Text>
                           </TouchableOpacity>
@@ -528,7 +553,7 @@ export default class Search extends Component {
                     </View>
                   </View>
                   {/* Display post Image */}
-                  <CacheableImage resizeMode='cover' style={styles.post_img} source={{ uri: config.getMediaUrl() + item.images }} permanent={true} />
+                  <Image resizeMode='cover' style={styles.post_img} source={{ uri: config.getMediaUrl() + item.images }}  />
                 </View>
               </View>
               <View style={{ flexDirection: 'column' }}>
@@ -552,7 +577,7 @@ export default class Search extends Component {
                 {/* Post caption  */}
                 <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                   <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate('UserProfile', { userId: item.userId })}
+                    onPress={() =>item.userId._id ==  global.curruntUserData.data._id?this.props.navigation.navigate('Profile'): this.props.navigation.navigate('UserProfile', { userId: item.userId ,curruntUserId: global.curruntUserData.data._id})}
                   >
                     <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10, textTransform: 'capitalize' }}>{item.userId.userName}</Text>
                   </TouchableOpacity>

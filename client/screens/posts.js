@@ -334,7 +334,7 @@ export default class Post extends Component {
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
                     <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('UserProfile', { userId: comment.userId })}
+                      onPress={() => comment.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', { userId: comment.userId,curruntUserId:global.curruntUserId })}
                     >
                       <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                     </TouchableOpacity>
@@ -367,7 +367,7 @@ export default class Post extends Component {
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
                     <TouchableOpacity
-                      onPress={() => this.props.navigation.navigate('UserProfile', { userId: comment.userId })}
+                      onPress={() => comment.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', { userId: comment.userId,curruntUserId:global.curruntUserId  })}
                     >
                       <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                     </TouchableOpacity>
@@ -548,7 +548,7 @@ export default class Post extends Component {
                             </View>
                             <View>
                               <TouchableOpacity
-                                onPress={() => this.props.navigation.navigate('UserProfile', { userId: item.userId })}
+                                onPress={() => item.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile') :this.props.navigation.navigate('UserProfile', { userId: item.userId ,curruntUserId:global.curruntUserId })}
                               >
                                 <Text style={styles.userName}>{item.userId.userName}</Text>
                               </TouchableOpacity>
@@ -600,8 +600,8 @@ export default class Post extends Component {
                     {/* Post caption  */}
                     <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                       <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('UserProfile', {
-                          userId: item.userId
+                        onPress={() => item.userId._id == global.curruntUserId ?this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', {
+                          userId: item.userId,curruntUserId:global.curruntUserId 
                         })}
                       >
                         {item.content ? (<Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{item.userId.userName}</Text>) : (null)}
@@ -671,7 +671,7 @@ export default class Post extends Component {
                               </View>
                               <TouchableOpacity
                                 style={{ flex: 8 }}
-                                onPress={() => { this.props.navigation.navigate('UserProfile', { userId: item }), this.RBSheet.close(); }}
+                                onPress={() => {item._id == global.curruntUserId?this.props.navigation.navigate('Profile'): this.props.navigation.navigate('UserProfile', { userId: item,curruntUserId:global.curruntUserId  }), this.RBSheet.close(); }}
                               >
                                 <Text style={{ marginTop: 10, color: 'black', fontSize: 18, marginLeft: 10 }}>{item.userName}</Text>
                               </TouchableOpacity>

@@ -68,7 +68,7 @@ export default class Followers extends Component {
                      <View style={{ flexDirection: 'row' }}>
                         <TouchableOpacity
                            style={{ flex: 8 }}
-                           onPress={() => this.props.navigation.navigate('UserProfile', { userId: item })}
+                           onPress={() => this.props.navigation.navigate('UserProfile', { userId: item, curruntUserId: global.curruntUserData.data._id })}
                         >
                            <Text style={styles.text}>{item.userName}</Text>
                         </TouchableOpacity>

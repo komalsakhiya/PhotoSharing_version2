@@ -216,7 +216,7 @@ export default class SinglePost extends Component {
                 {this.profilePic(comment)}
                 <View style={{ marginTop: 5, marginLeft: 15 }}>
                   <TouchableOpacity
-                    onPress={() => this.props.navigation.navigate('UserProfile', { userId: comment.userId })}
+                    onPress={() =>comment.userId._id == global.curruntUserData.data._id ? this.props.navigation.navigate('Profile'): this.props.navigation.navigate('UserProfile', { userId: comment.userId,curruntUserId: global.curruntUserData.data._id })}
                   >
                     <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                   </TouchableOpacity>
