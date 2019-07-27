@@ -40,7 +40,7 @@ export default class Post extends Component {
       page: 1,
       postIndex: '',
       curruntUserData: [],
-      message : ''
+      message: ''
     };
     this.props.navigation.addListener(
       'didFocus',
@@ -113,7 +113,7 @@ export default class Post extends Component {
         // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data.friendsPost);
         // console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", Object.keys(response.data.data.friendsPost[0]).length);
         if (response.data.status === 404) {
-          this.setState({message:response.data.message}) 
+          this.setState({ message: response.data.message })
           global.message = response.data.message
         }
         if (response.data.data) {
@@ -327,7 +327,7 @@ export default class Post extends Component {
           // console.log('comment ======================>', comment);
           let count = Object.keys(comment).length;
           // console.log("=]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]count=============>", count);
-          if (comment && count > 0) {
+          if (comment && count) {
             // console.log("========================in If={{{{{{{}}}}}}}======================", count, comment.userId.userName);
             return (
               <View>
@@ -336,7 +336,7 @@ export default class Post extends Component {
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
                     <TouchableOpacity
-                      onPress={() => comment.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', { userId: comment.userId,curruntUserId:global.curruntUserId })}
+                      onPress={() => comment.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', { userId: comment.userId, curruntUserId: global.curruntUserId })}
                     >
                       <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                     </TouchableOpacity>
@@ -360,7 +360,7 @@ export default class Post extends Component {
           // console.log('comment ======================>', comment);
           const count = Object.keys(comment).length;
           // console.log("=]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]count=============>", count);
-          if (comment && count > 0) {
+          if (comment && count) {
             // console.log("========================in If{={{}}}======================", count, comment.userId.userName);
             return (
               <View>
@@ -369,7 +369,7 @@ export default class Post extends Component {
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
                     <TouchableOpacity
-                      onPress={() => comment.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', { userId: comment.userId,curruntUserId:global.curruntUserId  })}
+                      onPress={() => comment.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', { userId: comment.userId, curruntUserId: global.curruntUserId })}
                     >
                       <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                     </TouchableOpacity>
@@ -445,7 +445,7 @@ export default class Post extends Component {
   sendPost = (userId) => {
     console.log("========================sharepost ======================================", userId, this.state.postId, global.curruntUserId, this.state.postIndex);
     this.setState({ ButtonStateHolder: true })
-    let payload = {
+    const payload = {
       "postId": this.state.postId,
       "srcId": global.curruntUserId,
       "desId": userId
@@ -511,8 +511,7 @@ export default class Post extends Component {
             </View>
           </>
         )
-      }
-      else if (friendpostarr[0].comment.length > 0 && Object.keys(friendpostarr[0]).length > 2 && (Object.keys(friendpostarr[0].comment).length > 2 || Object.keys(friendpostarr[0].comment).length >= 0)) {
+      } else if (friendpostarr[0].comment.length && Object.keys(friendpostarr[0]).length > 2 && (Object.keys(friendpostarr[0].comment).length > 2 || Object.keys(friendpostarr[0].comment).length >= 0)) {
         return (
           <>
             {/* header */}
@@ -550,7 +549,7 @@ export default class Post extends Component {
                             </View>
                             <View>
                               <TouchableOpacity
-                                onPress={() => item.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile') :this.props.navigation.navigate('UserProfile', { userId: item.userId ,curruntUserId:global.curruntUserId })}
+                                onPress={() => item.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', { userId: item.userId, curruntUserId: global.curruntUserId })}
                               >
                                 <Text style={styles.userName}>{item.userId.userName}</Text>
                               </TouchableOpacity>
@@ -602,8 +601,8 @@ export default class Post extends Component {
                     {/* Post caption  */}
                     <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                       <TouchableOpacity
-                        onPress={() => item.userId._id == global.curruntUserId ?this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', {
-                          userId: item.userId,curruntUserId:global.curruntUserId 
+                        onPress={() => item.userId._id == global.curruntUserId ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', {
+                          userId: item.userId, curruntUserId: global.curruntUserId
                         })}
                       >
                         {item.content ? (<Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{item.userId.userName}</Text>) : (null)}
@@ -673,7 +672,7 @@ export default class Post extends Component {
                               </View>
                               <TouchableOpacity
                                 style={{ flex: 8 }}
-                                onPress={() => {item._id == global.curruntUserId?this.props.navigation.navigate('Profile'): this.props.navigation.navigate('UserProfile', { userId: item,curruntUserId:global.curruntUserId  }), this.RBSheet.close(); }}
+                                onPress={() => { item._id == global.curruntUserId ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', { userId: item, curruntUserId: global.curruntUserId }), this.RBSheet.close(); }}
                               >
                                 <Text style={{ marginTop: 10, color: 'black', fontSize: 18, marginLeft: 10 }}>{item.userName}</Text>
                               </TouchableOpacity>

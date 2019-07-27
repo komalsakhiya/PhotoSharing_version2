@@ -21,7 +21,7 @@ export default class Message extends Component {
     let userId;
     try {
       const curruntUser = await AsyncStorage.getItem('curruntUser');
-      if (curruntUser !== null) {
+      if (curruntUser) {
         userId = JSON.parse(curruntUser);
         console.log("value===+++++++++++++++++++++===========================>", userId.data._id);
         global.curruntUserId = userId.data._id

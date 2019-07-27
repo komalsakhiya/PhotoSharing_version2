@@ -138,7 +138,7 @@ export default class Search extends Component {
               this.setState(prevState => ({
                 searchedUser: response.data.data
               }))
-              if (this.state.searchedPost.length != 0) {
+              if (this.state.searchedPost.length) {
                 this.setState({ searchedPost: [] })
               }
               console.log("================resulttttttttttttt=========>", response.data);
@@ -283,7 +283,7 @@ export default class Search extends Component {
           // console.log('comment ======================>', comment);
           let count = Object.keys(comment).length;
           // console.log("=]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]count=============>", count);
-          if (comment && count > 0) {
+          if (comment && count) {
             // console.log("========================in If=======================", count);
             return (
               <View>
@@ -370,9 +370,9 @@ export default class Search extends Component {
   */
   like = async (postId) => {
     // console.log('postId============================>', postId);
-    let apiBaseUrl = config.getBaseUrl() + "post/like";
+    // let apiBaseUrl = config.getBaseUrl() + "post/like";
     // console.log('apiBaseUrl===========>', apiBaseUrl);
-    let payload = {
+    const payload = {
       "postId": postId,
       "userId": global.curruntUserData.data._id
     }
@@ -382,7 +382,7 @@ export default class Search extends Component {
         // console.log("response of  like=================>", response.data);
         // console.log("like successfull");
       }).then(() => {
-        let payload = {
+        const payload = {
           "key": this.state.key,
         }
         postService.SearchHashTag(payload)

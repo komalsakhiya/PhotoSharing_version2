@@ -313,8 +313,7 @@ export default class Profile extends Component {
         console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
-      }
-      else {
+      } else {
         console.log("this images===========", response);
         const source = { uri: response.uri }
         console.log("source=============================>", source);
