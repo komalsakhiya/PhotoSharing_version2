@@ -3,17 +3,20 @@ package com.photosharing;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.RNFetchBlob.RNFetchBlobPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.swmansion.reanimated.ReanimatedPackage;
-import com.imagepicker.ImagePickerPackage;
+import io.invertase.firebase.RNFirebasePackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.imagepicker.ImagePickerPackage;
 import com.rnfs.RNFSPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
+
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage; 
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,12 +32,14 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNFetchBlobPackage(),
-            new VectorIconsPackage(),
-            new ReanimatedPackage(),
-            new ImagePickerPackage(),
+            new RNFirebasePackage(),
             new RNGestureHandlerPackage(),
-            new RNFSPackage()
+            new VectorIconsPackage(),
+            new ImagePickerPackage(),
+            new RNFSPackage(),
+            new RNFetchBlobPackage(),
+            new RNFirebaseMessagingPackage(),
+            new RNFirebaseNotificationsPackage()
       );
     }
 

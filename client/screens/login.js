@@ -48,9 +48,12 @@ export default class Login extends Component {
       this.setState({
         ButtonStateHolder: true
       })
+      const deviceToken = await AsyncStorage.getItem('fcmToken');
+      console.log('device token================>',deviceToken);
       const payload = {
         "userName": this.state.userName,
-        "password": this.state.password
+        "password": this.state.password,
+        "deviceToken":deviceToken
       }
       console.log("payload=============>", payload);
       userService.onLogin(payload)

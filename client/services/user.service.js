@@ -32,6 +32,7 @@ export default {
      * Get Friends Of CurruntUser
      */
     getFriends: (userId) => {
+        console.log("userId=======================>",userId)
         return axios.get(config.getBaseUrl() + "user/get-my-friends/" + userId).
             then(response => {
                 return response;
@@ -64,7 +65,7 @@ export default {
     },
 
     /**
-     * @param {object} payload
+     * @param {object} payload 
      * Login User
      */
     onLogin: (payload) => {
@@ -103,7 +104,7 @@ export default {
      * Get User By userId
      */
     getUserById: (userId) => {
-        return axios.get(config.getBaseUrl() + "user/get-single-user/" +  userId).
+        return axios.get(config.getBaseUrl() + "user/get-single-user/" + userId).
             then(response => {
                 return response;
             })
@@ -113,12 +114,12 @@ export default {
     /**
      * Get All Users
      */
-    getAllUser:()=>{
+    getAllUser: () => {
         return axios.get(config.getBaseUrl() + "user/user").
-        then(response=>{
-            return response;
-        })
-        .catch({ status: 500, message: 'Internal Serevr Error' });
+            then(response => {
+                return response;
+            })
+            .catch({ status: 500, message: 'Internal Serevr Error' });
     }
 
 }

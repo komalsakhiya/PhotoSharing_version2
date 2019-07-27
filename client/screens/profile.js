@@ -63,7 +63,7 @@ export default class Profile extends Component {
   getUserById = () => {
     userService.getUserById(global.curruntUserId).
       then(response => {
-        // console.log('currunt user===================>', response.data);
+        console.log('currunt user===================>', response.data);
         // console.log('currunt user post===================>', response.post);
         this.setState({
           curruntUserData: response.data.data
@@ -120,6 +120,7 @@ export default class Profile extends Component {
   logOut = async () => {
     console.log("logout==============");
     await AsyncStorage.setItem('curruntUser', '');
+    await AsyncStorage.setItem('fcmToken', '');
     const curruntUser = await AsyncStorage.getItem('curruntUser');
     console.log(']]]]]]]]]]]]]]]]]]', curruntUser);
     this.props.navigation.navigate('SignOut');

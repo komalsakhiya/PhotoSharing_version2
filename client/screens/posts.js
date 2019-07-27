@@ -40,6 +40,7 @@ export default class Post extends Component {
       page: 1,
       postIndex: '',
       curruntUserData: [],
+      message : ''
     };
     this.props.navigation.addListener(
       'didFocus',
@@ -79,7 +80,7 @@ export default class Post extends Component {
         this.setState({
           curruntUserData: response.data.data
         })
-        console.log("curruntUser================>", this.state.curruntUserData)
+        // console.log("curruntUser================>", this.state.curruntUserData)
       })
       .catch(err => {
         console.log('er=====>', err);
@@ -107,11 +108,12 @@ export default class Post extends Component {
     let pageNumber = this.state.page
     postService.getFriendsPost(global.curruntUserId, pageNumber).
       then((response) => {
-        console.log('response.data.data===============>', response.data)
+        // console.log('response.data.data===============>', response)
         // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data.friendsPost.length);
         // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data.friendsPost);
         // console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", Object.keys(response.data.data.friendsPost[0]).length);
         if (response.data.status === 404) {
+          this.setState({message:response.data.message}) 
           global.message = response.data.message
         }
         if (response.data.data) {
@@ -492,7 +494,7 @@ export default class Post extends Component {
       }
       return null;
     };
-    console.log("postttttttttttttttttttttt================================>", this.state.post, global.message);
+    // console.log("postttttttttttttttttttttt================================>", this.state.post, global.message);
     // console.log("post=================friend===============>", this.state.post.friendsPost);
     // console.log("comment================================>", this.state.comment);
     // console.log("all users=====this.state.user===========================>", this.state.allUser);
@@ -695,7 +697,7 @@ export default class Post extends Component {
           </>
         );
       }
-    } else if (global.message) {
+    } else if (this.state.message) {
       return (
         <>
           <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>

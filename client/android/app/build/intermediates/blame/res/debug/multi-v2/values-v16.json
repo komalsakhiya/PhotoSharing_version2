@@ -4,7 +4,17 @@
             "outputFile": "/var/www/html/photsharing_ios/client/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "/home/rao/.gradle/caches/transforms-2/files-2.1/d2fddd96debdba976a6fb9e88e7b07c1/res/values-v16/values-v16.xml",
+                    "source": "/home/rao/.gradle/caches/transforms-1/files-1.1/core-1.0.0.aar/64b5046b21c112c5c6e38c5c4a459185/res/values-v16/values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "65",
+                        "endOffsets": "116"
+                    }
+                },
+                {
+                    "source": "/home/rao/.gradle/caches/transforms-1/files-1.1/appcompat-1.0.0.aar/6f50ac955906127599fd9448cca43873/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -20,16 +30,6 @@
                         "endLines": "6",
                         "endColumns": "12",
                         "endOffsets": "289"
-                    }
-                },
-                {
-                    "source": "/home/rao/.gradle/caches/transforms-2/files-2.1/98577898acad5d60ee9f4afc303a6886/res/values-v16/values-v16.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "65",
-                        "endOffsets": "116"
                     }
                 }
             ]

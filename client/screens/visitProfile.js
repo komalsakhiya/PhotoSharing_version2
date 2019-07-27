@@ -32,7 +32,7 @@ export default class UserProfile extends Component {
   componentDidMount = async () => {
     console.log("=======================UserIdddddd===================", this.props.navigation.state.params.userId)
     global.user = this.props.navigation.state.params.userId;
-    this.setState({userData:global.user});
+    this.setState({ userData: global.user });
     curruntUserId = this.props.navigation.state.params.curruntUserId;
     console.log("=======================UserIdddddd{{{{}}}}===================", curruntUserId, global.user);
     userService.getUserById(curruntUserId).
@@ -63,20 +63,20 @@ export default class UserProfile extends Component {
         this.setState({
           post: response.data.data[0]
         })
-          if (this.state.curruntUserFriends) {
-            for (let i = 0; i <= this.state.curruntUserFriends.length; i++) {
-              if (global.user._id == this.state.curruntUserFriends[i]) {
-                console.log("unfollooooooowwwwww=========================>");
-                if(this.state.post){
+        if (this.state.curruntUserFriends) {
+          for (let i = 0; i <= this.state.curruntUserFriends.length; i++) {
+            if (global.user._id == this.state.curruntUserFriends[i]) {
+              console.log("unfollooooooowwwwww=========================>");
+              if (this.state.post) {
                 this.state.post.isFollow = true;
                 this.setState({ post: this.state.post })
-                }else{
-                  global.user.isFollow = true;
-                }
-                console.log("this.state.post=================>", this.state.post)
-              } 
+              } else {
+                global.user.isFollow = true;
+              }
+              console.log("this.state.post=================>", this.state.post)
             }
           }
+        }
       })
       .catch(err => {
         console.log('er=====>', err);
@@ -125,10 +125,10 @@ export default class UserProfile extends Component {
           console.log("follow sucessfully................");
           res = item;
           alertService.alerAndToast("Follow successfully....");
-          if(this.state.post){
+          if (this.state.post) {
             this.state.post.isFollow = true;
             this.setState({ post: this.state.post })
-          }else{
+          } else {
             this.state.userData.isFollow = true;
             this.setState({ userData: this.state.userData })
           }
@@ -163,12 +163,12 @@ export default class UserProfile extends Component {
         .then(response => {
           console.log("response=====>    ", typeof response.data);
           console.log("Unfollow sucessfully................");
-          if(this.state.post){
+          if (this.state.post) {
             this.state.post.isFollow = false;
             this.setState({ post: this.state.post })
-          } else{
+          } else {
             this.state.userData.isFollow = false;
-            this.setState({userData:this.state.userData})
+            this.setState({ userData: this.state.userData })
           }
           this.setState({ ButtonStateHolder: false })
         })
@@ -270,7 +270,7 @@ export default class UserProfile extends Component {
         );
       }
     } else {
-      console.log('this.state.userData==============>',this.state.userData)
+      console.log('this.state.userData==============>', this.state.userData)
       return (
         <>
           <View style={{ backgroundColor: '#ffffff98', paddingBottom: 20 }}>
