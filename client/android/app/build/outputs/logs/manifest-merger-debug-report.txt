@@ -1,10 +1,10 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-64:12
-INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-64:12
-INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-64:12
-INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-64:12
-MERGED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-64:12
+ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-63:12
+INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-63:12
+INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-63:12
+INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-63:12
+MERGED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-63:12
 MERGED from [:react-native-firebase] /var/www/html/photsharing_ios/client/node_modules/react-native-firebase/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-23:12
 MERGED from [:react-native-gesture-handler] /var/www/html/photsharing_ios/client/node_modules/react-native-gesture-handler/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
 MERGED from [:react-native-vector-icons] /var/www/html/photsharing_ios/client/node_modules/react-native-vector-icons/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
@@ -76,13 +76,13 @@ INJECTED from /var/www/html/photsharing_ios/client/android/app/src/debug/Android
 		INJECTED from /var/www/html/photsharing_ios/client/android/app/src/debug/AndroidManifest.xml
 	android:versionName
 		INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml
-		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-64:12
+		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-63:12
 		INJECTED from /var/www/html/photsharing_ios/client/android/app/src/debug/AndroidManifest.xml
 	xmlns:tools
 		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:11-57
 	android:versionCode
 		INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml
-		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-64:12
+		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:1:1-63:12
 		INJECTED from /var/www/html/photsharing_ios/client/android/app/src/debug/AndroidManifest.xml
 	xmlns:android
 		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:2:2-60
@@ -117,9 +117,9 @@ ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidMani
 	android:name
 		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:8:22-63
 application
-ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:10:5-62:19
-MERGED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:10:5-62:19
-MERGED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:10:5-62:19
+ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:10:5-61:19
+MERGED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:10:5-61:19
+MERGED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:10:5-61:19
 MERGED from [:react-native-firebase] /var/www/html/photsharing_ios/client/node_modules/react-native-firebase/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:5-21:19
 MERGED from [:react-native-firebase] /var/www/html/photsharing_ios/client/node_modules/react-native-firebase/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:5-21:19
 MERGED from [:react-native-image-picker] /var/www/html/photsharing_ios/client/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:9:5-19:19
@@ -268,35 +268,35 @@ ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidMani
 	android:name
 		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:49:13-89
 receiver#io.invertase.firebase.notifications.RNFirebaseNotificationReceiver
-ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:53:7-100
+ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:52:7-100
 	android:name
-		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:53:17-98
+		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:52:17-98
 receiver#io.invertase.firebase.notifications.RNFirebaseNotificationsRebootReceiver
-ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:54:7-61:18
+ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:53:7-60:18
 	android:enabled
-		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:54:17-39
+		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:53:17-39
 	android:exported
-		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:54:40-63
+		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:53:40-63
 	android:name
-		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:54:65-153
+		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:53:65-153
 intent-filter#action:name:android.intent.action.BOOT_COMPLETED+action:name:android.intent.action.QUICKBOOT_POWERON+action:name:com.htc.intent.action.QUICKBOOT_POWERON+category:name:android.intent.category.DEFAULT
-ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:55:9-60:25
+ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:54:9-59:25
 action#android.intent.action.BOOT_COMPLETED
-ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:56:11-72
+ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:55:11-72
 	android:name
-		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:56:19-70
+		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:55:19-70
 action#android.intent.action.QUICKBOOT_POWERON
+ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:56:11-75
+	android:name
+		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:56:19-73
+action#com.htc.intent.action.QUICKBOOT_POWERON
 ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:57:11-75
 	android:name
 		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:57:19-73
-action#com.htc.intent.action.QUICKBOOT_POWERON
-ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:58:11-75
-	android:name
-		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:58:19-73
 category#android.intent.category.DEFAULT
-ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:59:10-69
+ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:58:10-69
 	android:name
-		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:59:20-66
+		ADDED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml:58:20-66
 uses-sdk
 INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /var/www/html/photsharing_ios/client/android/app/src/main/AndroidManifest.xml

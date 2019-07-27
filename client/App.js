@@ -77,6 +77,7 @@ export default class App extends Component {
         .setNotificationId(notification.notificationId)
         .setTitle(notification.title)
         .setBody(notification.body)
+        .setData(data)
         .android.setChannelId('fcm_FirebaseNotifiction_default_channel') // e.g. the id you chose above
         .android.setSmallIcon('@drawable/logo') // create this icon in Android Studio
         .android.setColor('#000000') // you can set a color here
