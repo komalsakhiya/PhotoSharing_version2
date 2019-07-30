@@ -281,7 +281,7 @@ export default class Search extends Component {
       return (
         item.comment.slice(-3).map((comment) => {
           // console.log('comment ======================>', comment);
-          let count = Object.keys(comment).length;
+          const count = Object.keys(comment).length;
           // console.log("=]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]count=============>", count);
           if (comment && count) {
             // console.log("========================in If=======================", count);
@@ -291,7 +291,7 @@ export default class Search extends Component {
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
                     <TouchableOpacity
-                      onPress={() =>comment.userId._id ==  global.curruntUserData.data._id ?this.props.navigation.navigate('Profile'): this.props.navigation.navigate('UserProfile', { userId: comment.userId ,curruntUserId: global.curruntUserData.data._id})}
+                      onPress={() => comment.userId._id == global.curruntUserData.data._id ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', { userId: comment.userId, curruntUserId: global.curruntUserData.data._id })}
                     >
                       <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                     </TouchableOpacity>
@@ -312,9 +312,9 @@ export default class Search extends Component {
       return (
         item.comment.map((comment) => {
           // console.log('comment ======================>', comment);
-          let count = Object.keys(comment).length;
+          const count = Object.keys(comment).length;
           // console.log("=]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]count=============>", count);
-          if (comment && count > 0) {
+          if (comment && count) {
             // console.log("========================in If=======================", count);
             return (
               <View>
@@ -322,7 +322,7 @@ export default class Search extends Component {
                   {this.commentProfile(comment)}
                   <View style={{ marginTop: 5, marginLeft: 15 }}>
                     <TouchableOpacity
-                      onPress={() => comment.userId._id ==  global.curruntUserData.data._id ?this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', { userId: comment.userId ,curruntUserId: global.curruntUserData.data._id})}
+                      onPress={() => comment.userId._id == global.curruntUserData.data._id ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', { userId: comment.userId, curruntUserId: global.curruntUserData.data._id })}
                     >
                       <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10 }}>{comment.userId.userName}</Text>
                     </TouchableOpacity>
@@ -350,7 +350,7 @@ export default class Search extends Component {
     // console.log("item.comment============>", item.comment[0])
     let count = Object.keys(item.comment[0]).length;
     // console.log('count=======in count=============>', count);
-    if (count != 0) {
+    if (count) {
       return (
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('SinglePost', { id: item._id })}>
@@ -368,7 +368,7 @@ export default class Search extends Component {
    * @param {String} postId,UserId
    * Like Post 
   */
-  like = async (postId) => {
+  likePost = async (postId) => {
     // console.log('postId============================>', postId);
     // let apiBaseUrl = config.getBaseUrl() + "post/like";
     // console.log('apiBaseUrl===========>', apiBaseUrl);
@@ -400,7 +400,7 @@ export default class Search extends Component {
    * @param {String} postId
    * Add Comment
    */
-  comment = async (postId) => {
+  addComment = async (postId) => {
     // console.log('data=============================>', postId);
     this.setState({
       ButtonStateHolder: true
@@ -428,7 +428,7 @@ export default class Search extends Component {
           postService.SearchHashTag(payload)
             .then(response => {
               // console.log('response of serach tag=================>', response.data);
-              this.setState({ searchedPost: response.data.data, comment: '' })
+              this.setState({ searchedPost: response.data.data, comment: '', ButtonStateHolder: false })
             })
         })
         .catch(err => {
@@ -499,22 +499,23 @@ export default class Search extends Component {
               data={this.state.searchedUser}
               style={{ elevation: 5 }}
               renderItem={({ item }) =>
-                <View style={{ flexDirection: 'row' }}>
-                  <View style={{ flex: 2 }}>
-                    {this.profilePic(item.profilePhoto)}
-                  </View>
-                  <TouchableOpacity
-                    style={{ flex: 8 }}
-                    onPress={() => { item._id ==global.curruntUserData.data._id?this.props.navigation.navigate('Profile'): this.props.navigation.navigate('UserProfile', { userId: item ,curruntUserId: global.curruntUserData.data._id}) }}
-                  >
-                    <Text style={styles.name_text}>{item.userName}</Text>
-                  </TouchableOpacity>
-                  {/* <TouchableOpacity
+                <TouchableOpacity
+                  onPress={() => { item._id == global.curruntUserData.data._id ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', { userId: item, curruntUserId: global.curruntUserData.data._id }) }}
+                >
+                  <View style={{ flexDirection: 'row' }}>
+                    <View>
+                      {this.profilePic(item.profilePhoto)}
+                    </View>
+                    <View style={{ marginLeft: 10 }}>
+                      <Text style={styles.name_text}>{item.userName}</Text>
+                    </View>
+                    {/* <TouchableOpacity
                     style={styles.button2}
                     onPress={() => this.handleClickFollow(item)}>
                     <Text style={{ textAlign: 'center', marginTop: 5, color: 'white' }}>Follow</Text>
                   </TouchableOpacity> */}
-                </View>
+                  </View>
+                </TouchableOpacity>
               }
             />
           </View>
@@ -534,7 +535,7 @@ export default class Search extends Component {
                         </View>
                         <View>
                           <TouchableOpacity
-                            onPress={() => item.userId._id ==  global.curruntUserData.data._id?this.props.navigation.navigate('Profile'):this.props.navigation.navigate('UserProfile', { userId: item.userId,curruntUserId: global.curruntUserData.data._id })}
+                            onPress={() => item.userId._id == global.curruntUserData.data._id ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', { userId: item.userId, curruntUserId: global.curruntUserData.data._id })}
                           >
                             <Text style={styles.userName}>{item.userId.userName}</Text>
                           </TouchableOpacity>
@@ -553,7 +554,7 @@ export default class Search extends Component {
                     </View>
                   </View>
                   {/* Display post Image */}
-                  <Image resizeMode='cover' style={styles.post_img} source={{ uri: config.getMediaUrl() + item.images }}  />
+                  <Image resizeMode='cover' style={styles.post_img} source={{ uri: config.getMediaUrl() + item.images }} />
                 </View>
               </View>
               <View style={{ flexDirection: 'column' }}>
@@ -562,11 +563,11 @@ export default class Search extends Component {
                   <View>
                     {item.isLiked ? (<Icon name="favorite"
                       size={25}
-                      onPress={() => this.like(item._id)}
+                      onPress={() => this.likePost(item._id)}
                       style={{ marginLeft: 10, color: '#cd1d1f' }}
                     />) : (<Icon name="favorite-border"
                       size={25}
-                      onPress={() => this.like(item._id)}
+                      onPress={() => this.likePost(item._id)}
                       style={styles.like}
                     />)}
                   </View>
@@ -577,7 +578,7 @@ export default class Search extends Component {
                 {/* Post caption  */}
                 <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                   <TouchableOpacity
-                    onPress={() =>item.userId._id ==  global.curruntUserData.data._id?this.props.navigation.navigate('Profile'): this.props.navigation.navigate('UserProfile', { userId: item.userId ,curruntUserId: global.curruntUserData.data._id})}
+                    onPress={() => item.userId._id == global.curruntUserData.data._id ? this.props.navigation.navigate('Profile') : this.props.navigation.navigate('UserProfile', { userId: item.userId, curruntUserId: global.curruntUserData.data._id })}
                   >
                     <Text style={{ fontWeight: 'bold', color: 'black', marginLeft: 10, textTransform: 'capitalize' }}>{item.userId.userName}</Text>
                   </TouchableOpacity>
@@ -605,7 +606,7 @@ export default class Search extends Component {
                   </View>
                   <View style={{ flex: 1 }}>
                     <TouchableOpacity style={styles.button}
-                      onPress={() => this.comment(item._id)}
+                      onPress={() => this.addComment(item._id)}
                       disabled={this.state.ButtonStateHolder}>
                       <Icon
                         name="send"

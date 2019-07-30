@@ -119,11 +119,19 @@ export default class Profile extends Component {
    */
   logOut = async () => {
     console.log("logout==============");
-    await AsyncStorage.setItem('curruntUser', '');
-    await AsyncStorage.setItem('fcmToken', '');
-    const curruntUser = await AsyncStorage.getItem('curruntUser');
-    console.log(']]]]]]]]]]]]]]]]]]', curruntUser);
-    this.props.navigation.navigate('SignOut');
+    userService.logOut(global.curruntUserId).then((response) => {
+      console.log('response===============>', response);
+    })
+      .then(async () => {
+        await AsyncStorage.setItem('curruntUser', '');
+        await AsyncStorage.setItem('fcmToken', '');
+        const curruntUser = await AsyncStorage.getItem('curruntUser');
+        console.log(']]]]]]]]]]]]]]]]]]', curruntUser);
+        this.props.navigation.navigate('SignOut');
+      })
+      .catch((err) => {
+        console.log('er=====>', err);
+      })
   }
 
   openModal() {
@@ -163,7 +171,6 @@ export default class Profile extends Component {
           console.log('response====================>', res.data);
           console.log("=================response============>", JSON.parse(res.data));
           if (JSON.parse(res.data).message == 'Try other username.....') {
-            console.log("]]]]]]]]]]]]]]]]]]]]]]]");
             alertService.alerAndToast("Try other userName...");
           } else {
             console.log("in else==========>")
@@ -194,7 +201,7 @@ export default class Profile extends Component {
               name: 'userId',
               data: global.curruntUserId
             },
-          ]).then(async (res) => {
+          ]).then((res) => {
             console.log('response====================>', res.data);
             console.log("=================response============>", JSON.parse(res.data));
             if (JSON.parse(res.data).message == 'Try other username...') {
@@ -229,7 +236,7 @@ export default class Profile extends Component {
               data: global.curruntUserId
             },
 
-          ]).then(async (res) => {
+          ]).then((res) => {
             console.log('response====================>', res.data);
             console.log("=================response============>", JSON.parse(res.data));
             if (JSON.parse(res.data).message == 'Try other username.....') {
@@ -269,7 +276,7 @@ export default class Profile extends Component {
             filename: this.state.imageName,
             data: RNFetchBlob.wrap(cleanFilePath)
           },
-        ]).then(async (res) => {
+        ]).then((res) => {
           console.log('response====================>', res.data);
           if (JSON.parse(res.data).message == 'Try other username.....') {
             console.log("=================response============>", JSON.parse(res.data));
@@ -435,7 +442,7 @@ export default class Profile extends Component {
           </View>
           <View style={{ flex: 5 }}></View>
         </View>
-        <Text style={{ fontWeight: 'bold', marginTop: 5, fontSize: 22, textAlign: 'center', color: 'black' }}>{data.userName}</Text>
+        <Text style={{ fontWeight: 'bold', marginTop: 5, fontSize: 22, textAlign: 'center', color: 'black' }}>{this.state.curruntUserData.userName}</Text>
         {/* Display post,following,followers count */}
         <View style={{ flexDirection: 'row', marginTop: 20 }}>
           <View style={styles.footer}>
@@ -462,10 +469,10 @@ export default class Profile extends Component {
   }
 
   render() {
-    // console.log("curruntUserData+++++++====================>", this.state.curruntUserData);
-    // console.log("posttttttsttttttttttttttttttt====================>", this.state.userPost);
-    let curruntUserArray = this.state.curruntUserData.friends;
-    let curruntUserPost = this.state.userPost.friends;
+    console.log("curruntUserData+++++++====================>", this.state.curruntUserData);
+    console.log("posttttttsttttttttttttttttttt====================>", this.state.userPost);
+    const curruntUserArray = this.state.curruntUserData.friends;
+    const curruntUserPost = this.state.userPost.friends;
     console.log('curruntUserPost====>', curruntUserPost);
     console.log("file=================>", this.state.file)
     if (!curruntUserPost && curruntUserArray) {

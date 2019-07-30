@@ -120,6 +120,17 @@ export default {
                 return response;
             })
             .catch({ status: 500, message: 'Internal Serevr Error' });
+    },
+    /**
+     * @param {String} userId
+     * LogOut user
+     */
+    logOut:(userId)=>{
+        return axios.put(config.getBaseUrl() + "user/logout/" + userId).
+        then(response => {
+            return response;
+        })
+        .catch({ status: 500, message: 'Internal Serevr Error' });
     }
 
 }

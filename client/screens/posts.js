@@ -22,6 +22,7 @@ export default class Post extends Component {
     super(props)
     global.curruntUserId = "",
       global.message = ""
+      pageCount:0
     this.springValue = new Animated.Value(100);
     this.state = {
       post: [],
@@ -108,7 +109,8 @@ export default class Post extends Component {
     let pageNumber = this.state.page
     postService.getFriendsPost(global.curruntUserId, pageNumber).
       then((response) => {
-        // console.log('response.data.data===============>', response)
+        console.log('response.data.data===============>', response.data.totalPageCount);
+        pageCount = response.data.totalPageCount;
         // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data.friendsPost.length);
         // console.log('all friends postttttttttttttttttttttttttttt===================>', response.data.data.friendsPost);
         // console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", Object.keys(response.data.data.friendsPost[0]).length);
@@ -145,7 +147,7 @@ export default class Post extends Component {
    * @param {String} postId,index,isLiked
    * Like Post
    */
-  like = async (postId, index, isLiked) => {
+  likePost = async (postId, index, isLiked) => {
     let likearr;
     console.log('postId============================>', postId, index, isLiked);
     const payload = {
@@ -175,7 +177,7 @@ export default class Post extends Component {
    * @param {String} postId  
    *  Add Comment 
   */
-  comment = async (postId, index) => {
+  addComment = async (postId, index) => {
     let commentData;
     console.log('data=============================>', postId, index);
     this.setState({
@@ -187,7 +189,7 @@ export default class Post extends Component {
         ButtonStateHolder: false
       })
     } else {
-      console.log('postId============================>', postId, userName);
+      console.log('postId============================>', postId);
       const payload = {
         "postId": postId,
         "userId": global.curruntUserId,
@@ -200,8 +202,6 @@ export default class Post extends Component {
           console.log("comment successfull", commentData);
         }).then(() => {
           console.log("postttt ============ in comment()=============>", this.state.post[index].comment)
-          // this.setState({ page: 1, post: [] })
-          // this.getFriendsPost();
           const addComment = {
             comment: commentData.comment,
             userId: {
@@ -212,7 +212,8 @@ export default class Post extends Component {
           }
           console.log('addComment:---------------------------- ', addComment);
           this.state.post[index].comment.push(addComment);
-          this.setState({ post: this.state.post });
+          this.setState({ post: this.state.post, comment: '' });
+          console.log('this.state.comment=====================>',this.state.comment)
         })
         .catch(err => {
           console.log('er=====>', err);
@@ -359,9 +360,9 @@ export default class Post extends Component {
         item.comment.map((comment) => {
           // console.log('comment ======================>', comment);
           const count = Object.keys(comment).length;
-          // console.log("=]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]count=============>", count);
+          // console.log("=]]]]]]]]]]]]]]]]]]=]]]]]]]]]]]]count=============>", count);
           if (comment && count) {
-            // console.log("========================in If{={{}}}======================", count, comment.userId.userName);
+            // console.log("========================in If{={{}}}======================", count);
             return (
               <View>
                 {/* Display UserName  and Comment Content*/}
@@ -476,9 +477,10 @@ export default class Post extends Component {
   */
   handleEnd = () => {
     console.log("handleend callll==================>", this.state.page);
+    if(this.state.page < this.pageCount){
     this.setState(prevState => ({ page: prevState.page + 1 }), () => this.getFriendsPost());
   }
-
+}
 
   render() {
     const Toast = (props) => {
@@ -576,11 +578,11 @@ export default class Post extends Component {
                     <View style={{ flexDirection: 'row', flex: 9 }}>
                       {item.isLiked ? (<Icon name="favorite"
                         size={25}
-                        onPress={() => this.like(item._id, index, false)}
+                        onPress={() => this.likePost(item._id, index, false)}
                         style={{ marginLeft: 10, color: '#cd1d1f' }}
                       />) : (<Icon name="favorite-border"
                         size={25}
-                        onPress={() => this.like(item._id, index, true)}
+                        onPress={() => this.likePost(item._id, index, true)}
                         style={styles.like}
                       />)}
                       {item.like.length > 0 ? ((item.like.length == 1 ? (<Text style={styles.likeText}>{item.like.length} like</Text>) : (<Text style={styles.likeText}>{item.like.length} likes</Text>))) : (null)}
@@ -626,11 +628,12 @@ export default class Post extends Component {
                           onChangeText={(text) => this.setState({ comment: text })}
                           placeholder={'Comment here....'}
                           style={styles.input}
+                          value={this.state.comment}
                         />
                       </View>
                       <View style={{ flex: 1 }}>
                         <TouchableOpacity style={styles.button}
-                          onPress={() => this.comment(item._id, index)}
+                          onPress={() => this.addComment(item._id, index)}
                           disabled={this.state.ButtonStateHolder}>
                           <Icon
                             name="send"
@@ -697,6 +700,7 @@ export default class Post extends Component {
         );
       }
     } else if (this.state.message) {
+      console.log('this.state.message==================>', this.state.message)
       return (
         <>
           <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
@@ -722,25 +726,6 @@ export default class Post extends Component {
             <ActivityIndicator size="large" color="#ef6858" />
           </View>
         </>
-        // <>
-        //   {/* Header */}
-        //   <View style={{ height: 50, elevation: 3, backgroundColor: 'white' }}>
-        //     <Text style={{ fontSize: 20, top: 10, left: 20 }}>Posts</Text>
-        //     {/* Messege Icon */}
-        //     <TouchableOpacity
-        //       style={{ position: 'absolute', right: 10, top: 15, }}
-        //       onPress={() => this.props.navigation.navigate('Message')}
-        //     >
-        //       <Image style={{ height: 25, width: 25 }}
-        //         source={require('../images/Share_icon.png')}
-        //       />
-        //     </TouchableOpacity>
-        //   </View>
-        //   {/** There are no post */}
-        //   <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-        //     <Text >No post yet</Text>
-        //   </View>
-        // </>
       )
     }
   }

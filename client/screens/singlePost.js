@@ -12,8 +12,8 @@ import imageCacheHoc from 'react-native-image-cache-hoc';
 const CacheableImage = imageCacheHoc(Image, {
   validProtocols: ['http', 'https']
 });
-let { width } = Dimensions.get('window');
-let config = new Config();
+const { width } = Dimensions.get('window');
+const config = new Config();
 
 export default class SinglePost extends Component {
   constructor(props) {
@@ -101,9 +101,8 @@ export default class SinglePost extends Component {
   like = async (postId) => {
     console.log('userId======================>', global.curruntUserData.data._id);
     console.log('postId============================>', postId);
-    let apiBaseUrl = config.getBaseUrl() + "post/like";
     console.log('apiBaseUrl===========>', apiBaseUrl);
-    let payload = {
+    const payload = {
       "postId": postId,
       "userId": global.curruntUserData.data._id
     }
@@ -132,7 +131,7 @@ export default class SinglePost extends Component {
     } else {
       console.log('userId======================>', global.curruntUserData.data._id);
       console.log('postId============================>', postId);
-      let payload = {
+      const payload = {
         "postId": postId,
         "userId": global.curruntUserData.data._id,
         "comment": this.state.comment
@@ -157,7 +156,7 @@ export default class SinglePost extends Component {
    */
   deletePost = (postId) => {
     console.log('postid=====================>', postId);
-    let payload = {
+    const payload = {
       "postId": postId,
     }
     console.log('payload==============>', payload)
@@ -206,9 +205,9 @@ export default class SinglePost extends Component {
   displayComment = (item) => {
     return (
       item.comment.map((comment) => {
-        let count = Object.keys(comment).length;
+        const count = Object.keys(comment).length;
         console.log("=]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]count=============>", count);
-        if (comment && count > 0) {
+        if (comment && count) {
           console.log("========================in If=======================", count);
           return (
             <View>
@@ -240,7 +239,7 @@ export default class SinglePost extends Component {
    * Display Comment Count
    */
   displayCommentCount = (item) => {
-    let count = Object.keys(item.comment[0]).length;
+    const count = Object.keys(item.comment[0]).length;
     console.log('count=======in count=============>', count);
     if (count) {
       return (

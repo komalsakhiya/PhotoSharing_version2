@@ -6,8 +6,8 @@ import _ from 'lodash';
 import postService from '../services/post.service';
 import alertService from '../services/alert.service';
 import imageCacheHoc from 'react-native-image-cache-hoc';
-const CacheableImage = imageCacheHoc(Image,{
-    validProtocols: ['http', 'https']
+const CacheableImage = imageCacheHoc(Image, {
+	validProtocols: ['http', 'https']
 });
 const config = new Config();
 
@@ -39,6 +39,7 @@ export default class EditPost extends Component {
 	 * Edit Post
 	 */
 	editPost(data, postId, Data) {
+		let payload;
 		console.log('data====================>', data, postId, Data);
 		let tagsListArr = data.split(' ');
 		console.log('tagsListArr===========>', tagsListArr);
@@ -60,40 +61,30 @@ export default class EditPost extends Component {
 			ButtonStateHolder: true
 		})
 		if (!data) {
-			const payload = {
+			 payload = {
 				"content": Data,
 				"hashTag": hashTag1,
 				"postId": postId
 			}
-			postService.editPost(payload)
-				.then(response => {
-					console.log("response=================>", response.data);
-					alertService.alertService(response.data.message)
-					console.log("edit post successfull");
-				}).then(() => { this.props.navigation.navigate('SinglePost', { id: postId }), this.setState({ ButtonStateHolder: false }); })
-				.catch(err => {
-					console.log(err);
-					this.setState({ ButtonStateHolder: false });
-					alertService.alerAndToast("Internal Server Error");
-				})
 		} else {
-			const payload = {
+			 payload = {
 				"content": data,
 				"hashTag": hashTag,
 				"postId": postId
 			}
-			postService.editPost(payload)
-				.then(response => {
-					console.log("response=================>", response.data);
-					alertService.alerAndToast(response.data.message);
-					console.log("edit post successfull");
-				}).then(() => { this.props.navigation.navigate('SinglePost', { id: postId }), this.setState({ ButtonStateHolder: false }); })
-				.catch(err => {
-					console.log(err);
-					this.setState({ ButtonStateHolder: false });
-					alertService.alerAndToast("Internal Server Error");
-				})
 		}
+		postService.editPost(payload)
+			.then(response => {
+				console.log("response=================>", response.data);
+				alertService.alerAndToast(response.data.message);
+				console.log("edit post successfull");
+			}).then(() => { this.props.navigation.navigate('SinglePost', { id: postId }), this.setState({ ButtonStateHolder: false }); })
+			.catch(err => {
+				console.log(err);
+				this.setState({ ButtonStateHolder: false });
+				alertService.alerAndToast("Internal Server Error");
+			})
+
 	}
 
 	render() {
@@ -112,7 +103,7 @@ export default class EditPost extends Component {
 								placeholder={item.content}
 								style={[styles.editInput, { marginLeft: 20 }]}
 							/>
-							<CacheableImage resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }}  permanent={true}/>
+							<CacheableImage resizeMode='cover' style={styles.img} source={{ uri: config.getMediaUrl() + item.images }} permanent={true} />
 						</View>
 
 						<TouchableOpacity style={{ borderWidth: 1, marginTop: 20, borderColor: this.state.ButtonStateHolder ? 'gray' : 'black', padding: 8, width: 100, marginLeft: 15, marginBottom: 15, borderRadius: 5 }}

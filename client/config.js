@@ -1,5 +1,5 @@
 // const ip = 'http://photosharing.raoinformationtechnology-conduct.tk';
-const ip = 'http://192.168.43.53';
+const ip = 'http://192.168.1.49';
 // const ip ='http://photosharing.raoinformationtechnology.com';
 // const ip = 'https://protected-peak-31112.herokuapp.com/';
 

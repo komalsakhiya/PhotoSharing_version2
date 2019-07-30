@@ -47,7 +47,7 @@ export default class Addpost extends Component {
 	};
 
 	/**
-	 * @param {*} postData
+	 * @param {object} postData
 	 * Add Post
 	 */
 	addPost = async (data) => {
@@ -88,7 +88,6 @@ export default class Addpost extends Component {
 				'token': userId.token
 			},
 				[
-
 					{
 						name: 'content',
 						data: this.state.content
@@ -109,9 +108,10 @@ export default class Addpost extends Component {
 					},
 				])
 				.then(async (res) => {
-					console.log('response====================>', res.data, JSON.parse(res.data).message);
+					console.log('{{{{{{{{{{{{{{{{{{{{{',res)
+					// console.log('response====================>', res.data, JSON.parse(res.data).message);
 					this.setState({ content: '', file: "", ButtonStateHolder: false, imageName: '' })
-					if ((res.data == "Unauthorized: Invalid token" || res.data == "Unauthorized: No token provided")) {
+					if ((res.respInfo.status === 401)) {
 						alert(res.data);
 						await AsyncStorage.setItem('curruntUser', '');
 						this.props.navigation.navigate('Login')

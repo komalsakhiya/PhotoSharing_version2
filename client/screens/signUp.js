@@ -40,7 +40,7 @@ export default class SignUp extends Component {
       return false;
     }
     else {
-      let payload = {
+      const payload = {
         "name": this.state.name,
         "email": this.state.email,
         "password": this.state.password,

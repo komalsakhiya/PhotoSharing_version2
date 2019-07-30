@@ -65,9 +65,6 @@ export default class Login extends Component {
           } catch (error) {
             alertService.alerAndToast("User Data Not Found");
           }
-          const curruntUser = await AsyncStorage.getItem('curruntUser');
-          console.log('curuuntuser---------------------------->', JSON.parse(curruntUser));
-          console.log(']]]]]]]]]]]]]]]]]]', curruntUser);
           console.log("login successfull");
         }).then(() => { this.props.navigation.navigate('SignOut') }, this.setState({
           ButtonStateHolder: false
@@ -83,7 +80,6 @@ export default class Login extends Component {
     this.setState({ isVisible: !this.state.isVisible })
   }
   render() {
-    console.log("{{{{{{{{{{{{{{{", this.state);
     return (
       <View style={styles.form}>
         {/* Login Form */}
